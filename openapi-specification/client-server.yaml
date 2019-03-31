@@ -196,12 +196,12 @@ paths:
       parameters:
         - name: eventType
           in: path
-          description: The type of event.
+          description: The type of event to send.
           required: true
           schema:
             type: string
           example: 
-            - m.room.name
+            - m.new_device
         - name: txnId
           in: path
           description: The transaction ID for this event. Clients should generate an ID unique across requests with the same access token; it will be used by the server to ensure idempotency of requests.
