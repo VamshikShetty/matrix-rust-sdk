@@ -5,7 +5,9 @@ authors = ["Vamshik Shetty <vamshikdshetty@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-
+hyper = "~0.11"
+futures = "0.1.23"
+tokio-core = "*"
 
 [dependencies.matrix]
 path = "../matrix"
