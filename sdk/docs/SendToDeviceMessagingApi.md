@@ -21,7 +21,7 @@ This endpoint is used to send send-to-device events to a set of client devices.
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context containing the authentication | nil if no authentication
-  **event_type** | **String**| The type of event. | 
+  **event_type** | **String**| The type of event to send. | 
   **txn_id** | **String**| The transaction ID for this event. Clients should generate an ID unique across requests with the same access token; it will be used by the server to ensure idempotency of requests. | 
   **body** | [**Body**](Body.md)|  | 
 
