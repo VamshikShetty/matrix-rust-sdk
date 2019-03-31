@@ -1,0 +1,11 @@
+[package]
+name = "samples"
+version = "0.1.0"
+authors = ["Vamshik Shetty <vamshikdshetty@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+
+
+[dependencies.matrix]
+path = "../matrix"
