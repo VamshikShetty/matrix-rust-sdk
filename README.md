@@ -34,4 +34,4 @@ java -jar modules/openapi-generator-cli/target/openapi-generator-cli.jar generat
 
 ## Running a test samples
 1. cargo run --example login_get
-2. cargo run --example login_put
+2. cargo run --example login_put "\<username\>" "\<password\>"
