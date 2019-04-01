@@ -11,20 +11,17 @@
 use std::rc::Rc;
 use std::borrow::Borrow;
 
-use hyper;
-use serde_json;
+use reqwest;
 use serde_json::Value;
-use futures::Future;
 
-use super::{Error, configuration};
-use super::request as __internal_request;
+use super::{Error, configuration, urlencode};
 
-pub struct RoomParticipationApiClient<C: hyper::client::Connect> {
-    configuration: Rc<configuration::Configuration<C>>,
+pub struct RoomParticipationApiClient {
+    configuration: Rc<configuration::Configuration>,
 }
 
-impl<C: hyper::client::Connect> RoomParticipationApiClient<C> {
-    pub fn new(configuration: Rc<configuration::Configuration<C>>) -> RoomParticipationApiClient<C> {
+impl RoomParticipationApiClient {
+    pub fn new(configuration: Rc<configuration::Configuration>) -> RoomParticipationApiClient {
         RoomParticipationApiClient {
             configuration: configuration,
         }
@@ -32,23 +29,34 @@ impl<C: hyper::client::Connect> RoomParticipationApiClient<C> {
 }
 
 pub trait RoomParticipationApi {
-    fn send_event_txnid(&self, room_id: &str, event_type: &str, txn_id: &str, body: Value) -> Box<Future<Item = ::models::Model200SendEventTxnid, Error = Error<serde_json::Value>>>;
+    fn send_event_txnid(&self, room_id: &str, event_type: &str, txn_id: &str, body: Value) -> Result<::models::Model200SendEventTxnid, Error>;
 }
 
+impl RoomParticipationApi for RoomParticipationApiClient {
+    fn send_event_txnid(&self, room_id: &str, event_type: &str, txn_id: &str, body: Value) -> Result<::models::Model200SendEventTxnid, Error> {
+        let configuration: &configuration::Configuration = self.configuration.borrow();
+        let client = &configuration.client;
 
-impl<C: hyper::client::Connect>RoomParticipationApi for RoomParticipationApiClient<C> {
-    fn send_event_txnid(&self, room_id: &str, event_type: &str, txn_id: &str, body: Value) -> Box<Future<Item = ::models::Model200SendEventTxnid, Error = Error<serde_json::Value>>> {
-        __internal_request::Request::new(hyper::Method::Put, "/rooms/{roomId}/send/{eventType}/{txnId}".to_string())
-            .with_auth(__internal_request::Auth::ApiKey(__internal_request::ApiKey{
-                in_header: false,
-                in_query: true,
-                param_name: "access_token".to_owned(),
-            }))
-            .with_path_param("roomId".to_string(), room_id.to_string())
-            .with_path_param("eventType".to_string(), event_type.to_string())
-            .with_path_param("txnId".to_string(), txn_id.to_string())
-            .with_body_param(body)
-            .execute(self.configuration.borrow())
+        let uri_str = format!("{}/rooms/{roomId}/send/{eventType}/{txnId}", configuration.base_path, roomId=urlencode(room_id), eventType=urlencode(event_type), txnId=urlencode(txn_id));
+        let mut req_builder = client.put(uri_str.as_str());
+
+        if let Some(ref apikey) = configuration.api_key {
+            let key = apikey.key.clone();
+            let val = match apikey.prefix {
+                Some(ref prefix) => format!("{} {}", prefix, key),
+                None => key,
+            };
+            req_builder = req_builder.query(&[("access_token", val)]);
+        }
+        if let Some(ref user_agent) = configuration.user_agent {
+            req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());
+        }
+        req_builder = req_builder.json(&body);
+
+        // send request
+        let req = req_builder.build()?;
+
+        Ok(client.execute(req)?.error_for_status()?.json()?)
     }
 
 }

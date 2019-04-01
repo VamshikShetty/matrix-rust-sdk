@@ -1,10 +1,10 @@
 # \SendToDeviceMessagingApi
 
-All URIs are relative to *https://matrix.org/_matrix/client/r0*
+All URIs are relative to *http://matrix.org/_matrix/client/r0*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**send_to_device**](SendToDeviceMessagingApi.md#send_to_device) | **Put** /sendToDevice/{eventType}/{txnId} | Send an event to a given set of devices.
+[**send_to_device**](SendToDeviceMessagingApi.md#send_to_device) | **put** /sendToDevice/{eventType}/{txnId} | Send an event to a given set of devices.
 
 
 

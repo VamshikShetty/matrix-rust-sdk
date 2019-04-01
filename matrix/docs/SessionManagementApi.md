@@ -1,11 +1,11 @@
 # \SessionManagementApi
 
-All URIs are relative to *https://matrix.org/_matrix/client/r0*
+All URIs are relative to *http://matrix.org/_matrix/client/r0*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**get_login_flows**](SessionManagementApi.md#get_login_flows) | **Get** /login | Get the supported login types to authenticate users
-[**login**](SessionManagementApi.md#login) | **Post** /login | Authenticates the user.
+[**get_login_flows**](SessionManagementApi.md#get_login_flows) | **get** /login | Get the supported login types to authenticate users
+[**login**](SessionManagementApi.md#login) | **post** /login | Authenticates the user.
 
 
 

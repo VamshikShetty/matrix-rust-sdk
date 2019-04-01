@@ -20,16 +20,16 @@ Put the package under your project folder and add the following in import:
 
 ## Documentation for API Endpoints
 
-All URIs are relative to *https://matrix.org/_matrix/client/r0*
+All URIs are relative to *http://matrix.org/_matrix/client/r0*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
-*EndToEndEncryptionApi* | [**query_keys**](docs/EndToEndEncryptionApi.md#query_keys) | **Post** /keys/query | Download device identity keys.
-*EndToEndEncryptionApi* | [**upload_keys**](docs/EndToEndEncryptionApi.md#upload_keys) | **Post** /keys/upload | Upload end-to-end encryption keys.
-*RoomParticipationApi* | [**send_event_txnid**](docs/RoomParticipationApi.md#send_event_txnid) | **Put** /rooms/{roomId}/send/{eventType}/{txnId} | Send a message event to the given room.
-*SendToDeviceMessagingApi* | [**send_to_device**](docs/SendToDeviceMessagingApi.md#send_to_device) | **Put** /sendToDevice/{eventType}/{txnId} | Send an event to a given set of devices.
-*SessionManagementApi* | [**get_login_flows**](docs/SessionManagementApi.md#get_login_flows) | **Get** /login | Get the supported login types to authenticate users
-*SessionManagementApi* | [**login**](docs/SessionManagementApi.md#login) | **Post** /login | Authenticates the user.
+*EndToEndEncryptionApi* | [**query_keys**](docs/EndToEndEncryptionApi.md#query_keys) | **post** /keys/query | Download device identity keys.
+*EndToEndEncryptionApi* | [**upload_keys**](docs/EndToEndEncryptionApi.md#upload_keys) | **post** /keys/upload | Upload end-to-end encryption keys.
+*RoomParticipationApi* | [**send_event_txnid**](docs/RoomParticipationApi.md#send_event_txnid) | **put** /rooms/{roomId}/send/{eventType}/{txnId} | Send a message event to the given room.
+*SendToDeviceMessagingApi* | [**send_to_device**](docs/SendToDeviceMessagingApi.md#send_to_device) | **put** /sendToDevice/{eventType}/{txnId} | Send an event to a given set of devices.
+*SessionManagementApi* | [**get_login_flows**](docs/SessionManagementApi.md#get_login_flows) | **get** /login | Get the supported login types to authenticate users
+*SessionManagementApi* | [**login**](docs/SessionManagementApi.md#login) | **post** /login | Authenticates the user.
 
 
 ## Documentation For Models

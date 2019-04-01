@@ -11,20 +11,17 @@
 use std::rc::Rc;
 use std::borrow::Borrow;
 
-use hyper;
-use serde_json;
+use reqwest;
 use serde_json::Value;
-use futures::Future;
 
-use super::{Error, configuration};
-use super::request as __internal_request;
+use super::{Error, configuration, urlencode};
 
-pub struct EndToEndEncryptionApiClient<C: hyper::client::Connect> {
-    configuration: Rc<configuration::Configuration<C>>,
+pub struct EndToEndEncryptionApiClient {
+    configuration: Rc<configuration::Configuration>,
 }
 
-impl<C: hyper::client::Connect> EndToEndEncryptionApiClient<C> {
-    pub fn new(configuration: Rc<configuration::Configuration<C>>) -> EndToEndEncryptionApiClient<C> {
+impl EndToEndEncryptionApiClient {
+    pub fn new(configuration: Rc<configuration::Configuration>) -> EndToEndEncryptionApiClient {
         EndToEndEncryptionApiClient {
             configuration: configuration,
         }
@@ -32,32 +29,61 @@ impl<C: hyper::client::Connect> EndToEndEncryptionApiClient<C> {
 }
 
 pub trait EndToEndEncryptionApi {
-    fn query_keys(&self, query_keys: ::models::QueryKeys) -> Box<Future<Item = ::models::Model200QueryKeys, Error = Error<serde_json::Value>>>;
-    fn upload_keys(&self, keys_upload: ::models::KeysUpload) -> Box<Future<Item = ::models::Model200KeysUpload, Error = Error<serde_json::Value>>>;
+    fn query_keys(&self, query_keys: ::models::QueryKeys) -> Result<::models::Model200QueryKeys, Error>;
+    fn upload_keys(&self, keys_upload: ::models::KeysUpload) -> Result<::models::Model200KeysUpload, Error>;
 }
 
+impl EndToEndEncryptionApi for EndToEndEncryptionApiClient {
+    fn query_keys(&self, query_keys: ::models::QueryKeys) -> Result<::models::Model200QueryKeys, Error> {
+        let configuration: &configuration::Configuration = self.configuration.borrow();
+        let client = &configuration.client;
 
-impl<C: hyper::client::Connect>EndToEndEncryptionApi for EndToEndEncryptionApiClient<C> {
-    fn query_keys(&self, query_keys: ::models::QueryKeys) -> Box<Future<Item = ::models::Model200QueryKeys, Error = Error<serde_json::Value>>> {
-        __internal_request::Request::new(hyper::Method::Post, "/keys/query".to_string())
-            .with_auth(__internal_request::Auth::ApiKey(__internal_request::ApiKey{
-                in_header: false,
-                in_query: true,
-                param_name: "access_token".to_owned(),
-            }))
-            .with_body_param(query_keys)
-            .execute(self.configuration.borrow())
+        let uri_str = format!("{}/keys/query", configuration.base_path);
+        let mut req_builder = client.post(uri_str.as_str());
+
+        if let Some(ref apikey) = configuration.api_key {
+            let key = apikey.key.clone();
+            let val = match apikey.prefix {
+                Some(ref prefix) => format!("{} {}", prefix, key),
+                None => key,
+            };
+            req_builder = req_builder.query(&[("access_token", val)]);
+        }
+        if let Some(ref user_agent) = configuration.user_agent {
+            req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());
+        }
+        req_builder = req_builder.json(&query_keys);
+
+        // send request
+        let req = req_builder.build()?;
+
+        Ok(client.execute(req)?.error_for_status()?.json()?)
     }
 
-    fn upload_keys(&self, keys_upload: ::models::KeysUpload) -> Box<Future<Item = ::models::Model200KeysUpload, Error = Error<serde_json::Value>>> {
-        __internal_request::Request::new(hyper::Method::Post, "/keys/upload".to_string())
-            .with_auth(__internal_request::Auth::ApiKey(__internal_request::ApiKey{
-                in_header: false,
-                in_query: true,
-                param_name: "access_token".to_owned(),
-            }))
-            .with_body_param(keys_upload)
-            .execute(self.configuration.borrow())
+    fn upload_keys(&self, keys_upload: ::models::KeysUpload) -> Result<::models::Model200KeysUpload, Error> {
+        let configuration: &configuration::Configuration = self.configuration.borrow();
+        let client = &configuration.client;
+
+        let uri_str = format!("{}/keys/upload", configuration.base_path);
+        let mut req_builder = client.post(uri_str.as_str());
+
+        if let Some(ref apikey) = configuration.api_key {
+            let key = apikey.key.clone();
+            let val = match apikey.prefix {
+                Some(ref prefix) => format!("{} {}", prefix, key),
+                None => key,
+            };
+            req_builder = req_builder.query(&[("access_token", val)]);
+        }
+        if let Some(ref user_agent) = configuration.user_agent {
+            req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());
+        }
+        req_builder = req_builder.json(&keys_upload);
+
+        // send request
+        let req = req_builder.build()?;
+
+        Ok(client.execute(req)?.error_for_status()?.json()?)
     }
 
 }

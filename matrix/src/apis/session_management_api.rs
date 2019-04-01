@@ -11,20 +11,17 @@
 use std::rc::Rc;
 use std::borrow::Borrow;
 
-use hyper;
-use serde_json;
+use reqwest;
 use serde_json::Value;
-use futures::Future;
 
-use super::{Error, configuration};
-use super::request as __internal_request;
+use super::{Error, configuration, urlencode};
 
-pub struct SessionManagementApiClient<C: hyper::client::Connect> {
-    configuration: Rc<configuration::Configuration<C>>,
+pub struct SessionManagementApiClient {
+    configuration: Rc<configuration::Configuration>,
 }
 
-impl<C: hyper::client::Connect> SessionManagementApiClient<C> {
-    pub fn new(configuration: Rc<configuration::Configuration<C>>) -> SessionManagementApiClient<C> {
+impl SessionManagementApiClient {
+    pub fn new(configuration: Rc<configuration::Configuration>) -> SessionManagementApiClient {
         SessionManagementApiClient {
             configuration: configuration,
         }
@@ -32,21 +29,44 @@ impl<C: hyper::client::Connect> SessionManagementApiClient<C> {
 }
 
 pub trait SessionManagementApi {
-    fn get_login_flows(&self, ) -> Box<Future<Item = ::models::Model200LoginGet, Error = Error<serde_json::Value>>>;
-    fn login(&self, login_request_body: ::models::LoginRequestBody) -> Box<Future<Item = ::models::Model200LoginPut, Error = Error<serde_json::Value>>>;
+    fn get_login_flows(&self, ) -> Result<::models::Model200LoginGet, Error>;
+    fn login(&self, login_request_body: ::models::LoginRequestBody) -> Result<::models::Model200LoginPut, Error>;
 }
 
+impl SessionManagementApi for SessionManagementApiClient {
+    fn get_login_flows(&self, ) -> Result<::models::Model200LoginGet, Error> {
+        let configuration: &configuration::Configuration = self.configuration.borrow();
+        let client = &configuration.client;
 
-impl<C: hyper::client::Connect>SessionManagementApi for SessionManagementApiClient<C> {
-    fn get_login_flows(&self, ) -> Box<Future<Item = ::models::Model200LoginGet, Error = Error<serde_json::Value>>> {
-        __internal_request::Request::new(hyper::Method::Get, "/login".to_string())
-            .execute(self.configuration.borrow())
+        let uri_str = format!("{}/login", configuration.base_path);
+        let mut req_builder = client.get(uri_str.as_str());
+
+        if let Some(ref user_agent) = configuration.user_agent {
+            req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());
+        }
+
+        // send request
+        let req = req_builder.build()?;
+
+        Ok(client.execute(req)?.error_for_status()?.json()?)
     }
 
-    fn login(&self, login_request_body: ::models::LoginRequestBody) -> Box<Future<Item = ::models::Model200LoginPut, Error = Error<serde_json::Value>>> {
-        __internal_request::Request::new(hyper::Method::Post, "/login".to_string())
-            .with_body_param(login_request_body)
-            .execute(self.configuration.borrow())
+    fn login(&self, login_request_body: ::models::LoginRequestBody) -> Result<::models::Model200LoginPut, Error> {
+        let configuration: &configuration::Configuration = self.configuration.borrow();
+        let client = &configuration.client;
+
+        let uri_str = format!("{}/login", configuration.base_path);
+        let mut req_builder = client.post(uri_str.as_str());
+
+        if let Some(ref user_agent) = configuration.user_agent {
+            req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());
+        }
+        req_builder = req_builder.json(&login_request_body);
+
+        // send request
+        let req = req_builder.build()?;
+
+        Ok(client.execute(req)?.error_for_status()?.json()?)
     }
 
 }

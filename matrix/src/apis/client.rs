@@ -1,18 +1,17 @@
 use std::rc::Rc;
 
-use hyper;
 use super::configuration::Configuration;
 
-pub struct APIClient<C: hyper::client::Connect> {
-    configuration: Rc<Configuration<C>>,
+pub struct APIClient {
+    configuration: Rc<Configuration>,
     end_to_end_encryption_api: Box<::apis::EndToEndEncryptionApi>,
     room_participation_api: Box<::apis::RoomParticipationApi>,
     send_to_device_messaging_api: Box<::apis::SendToDeviceMessagingApi>,
     session_management_api: Box<::apis::SessionManagementApi>,
 }
 
-impl<C: hyper::client::Connect> APIClient<C> {
-    pub fn new(configuration: Configuration<C>) -> APIClient<C> {
+impl APIClient {
+    pub fn new(configuration: Configuration) -> APIClient {
         let rc = Rc::new(configuration);
 
         APIClient {
