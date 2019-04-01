@@ -1,6 +1,6 @@
 # \RoomParticipationApi
 
-All URIs are relative to *http://matrix.org/_matrix/client/r0*
+All URIs are relative to *https://matrix.org/_matrix/client/r0*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------

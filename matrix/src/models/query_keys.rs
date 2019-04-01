@@ -15,13 +15,13 @@ use serde_json::Value;
 #[derive(Debug, Serialize, Deserialize)]
 pub struct QueryKeys {
     /// The time (in milliseconds) to wait when downloading keys from remote servers. 10 seconds is the recommended default.
-    #[serde(rename = "timeout")]
+    #[serde(rename = "timeout",skip_serializing_if="Option::is_none")]
     pub timeout: Option<i32>,
     /// The keys to be downloaded. A map from user ID, to a list of device IDs, or to an empty list to indicate all devices for the corresponding user.
     #[serde(rename = "device_keys")]
     pub device_keys: ::std::collections::HashMap<String, Vec<String>>,
     /// If the client is fetching keys as a result of a device update received in a sync request, this should be the 'since' token of that sync request, or any later sync token. This allows the server to ensure its response contains the keys advertised by the notification in that sync.
-    #[serde(rename = "token")]
+    #[serde(rename = "token",skip_serializing_if="Option::is_none")]
     pub token: Option<String>,
 }
 

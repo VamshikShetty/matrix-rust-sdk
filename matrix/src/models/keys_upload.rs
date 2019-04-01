@@ -15,10 +15,10 @@ use serde_json::Value;
 #[derive(Debug, Serialize, Deserialize)]
 pub struct KeysUpload {
     /// Identity keys for the device. May be absent if no new identity keys are required.
-    #[serde(rename = "device_keys")]
+    #[serde(rename = "device_keys",skip_serializing_if="Option::is_none")]
     pub device_keys: Option<::models::DeviceKeys>,
     /// One-time public keys for `pre-key` messages. The names of the properties should be in the format `<algorithm>:<key_id>`. The format of the key is determined by the key algorithm. May be absent if no new one-time keys are required.
-    #[serde(rename = "one_time_keys")]
+    #[serde(rename = "one_time_keys",skip_serializing_if="Option::is_none")]
     pub one_time_keys: Option<Value>,
 }
 

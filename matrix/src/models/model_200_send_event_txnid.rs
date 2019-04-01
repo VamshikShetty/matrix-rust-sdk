@@ -15,7 +15,7 @@ use serde_json::Value;
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Model200SendEventTxnid {
     /// A unique identifier for the event.
-    #[serde(rename = "event_id")]
+    #[serde(rename = "event_id",skip_serializing_if="Option::is_none")]
     pub event_id: Option<String>,
 }
 

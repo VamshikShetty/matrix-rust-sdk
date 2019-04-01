@@ -19,7 +19,7 @@ pub struct UserIdentifier {
     #[serde(rename = "type")]
     pub _type: String,
     /// The fully qualified user ID or just local part of the user ID, to log in.  Deprecated in favour of ``identifier``.
-    #[serde(rename = "user")]
+    #[serde(rename = "user",skip_serializing_if="Option::is_none")]
     pub user: Option<String>,
 }
 

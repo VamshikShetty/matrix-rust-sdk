@@ -19,7 +19,7 @@ pub struct Error {
     #[serde(rename = "errcode")]
     pub errcode: String,
     /// A human-readable error message.
-    #[serde(rename = "error")]
+    #[serde(rename = "error",skip_serializing_if="Option::is_none")]
     pub error: Option<String>,
 }
 

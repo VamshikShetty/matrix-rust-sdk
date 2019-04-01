@@ -15,7 +15,7 @@ use serde_json::Value;
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Body {
     /// The messages to send. A map from user ID, to a map from device ID to message body. The device ID may also be `*`, meaning all known devices for the user.
-    #[serde(rename = "messages")]
+    #[serde(rename = "messages",skip_serializing_if="Option::is_none")]
     pub messages: Option<::std::collections::HashMap<String, ::std::collections::HashMap<String, Value>>>,
 }
 

@@ -17,25 +17,25 @@ pub struct LoginRequestBody {
     /// The login type being used.
     #[serde(rename = "type")]
     pub _type: String,
-    #[serde(rename = "identifier")]
+    #[serde(rename = "identifier",skip_serializing_if="Option::is_none")]
     pub identifier: Option<::models::UserIdentifier>,
     /// When logging in using a third party identifier, the medium of the identifier. Must be 'email'.  Deprecated in favour of ``identifier``.
-    #[serde(rename = "medium")]
+    #[serde(rename = "medium",skip_serializing_if="Option::is_none")]
     pub medium: Option<String>,
     /// Third party identifier for the user.  Deprecated in favour of ``identifier``.
-    #[serde(rename = "address")]
+    #[serde(rename = "address",skip_serializing_if="Option::is_none")]
     pub address: Option<String>,
     /// Required when ``type`` is ``m.login.password``. The user's password.
-    #[serde(rename = "password")]
+    #[serde(rename = "password",skip_serializing_if="Option::is_none")]
     pub password: Option<String>,
     /// Required when ``type`` is ``m.login.token``. Part of `Token-based`_ login.
-    #[serde(rename = "token")]
+    #[serde(rename = "token",skip_serializing_if="Option::is_none")]
     pub token: Option<String>,
     /// ID of the client device. If this does not correspond to a known client device, a new device will be created. The server will auto-generate a device_id if this is not specified.
-    #[serde(rename = "device_id")]
+    #[serde(rename = "device_id",skip_serializing_if="Option::is_none")]
     pub device_id: Option<String>,
     /// A display name to assign to the newly-created device. Ignored if ``device_id`` corresponds to a known device.
-    #[serde(rename = "initial_device_display_name")]
+    #[serde(rename = "initial_device_display_name",skip_serializing_if="Option::is_none")]
     pub initial_device_display_name: Option<String>,
 }
 

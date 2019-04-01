@@ -15,7 +15,7 @@ use serde_json::Value;
 #[derive(Debug, Serialize, Deserialize)]
 pub struct LoginFlow {
     /// The login type. This is supplied as the ``type`` when logging in.
-    #[serde(rename = "type")]
+    #[serde(rename = "type",skip_serializing_if="Option::is_none")]
     pub _type: Option<String>,
 }
 

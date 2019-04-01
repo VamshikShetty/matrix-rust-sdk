@@ -15,7 +15,7 @@ use serde_json::Value;
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Model200LoginGet {
     /// The homeserver's supported login types
-    #[serde(rename = "flows")]
+    #[serde(rename = "flows",skip_serializing_if="Option::is_none")]
     pub flows: Option<Vec<::models::LoginFlow>>,
 }
 

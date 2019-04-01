@@ -19,10 +19,10 @@ pub struct RateLimited {
     #[serde(rename = "errcode")]
     pub errcode: String,
     /// A human-readable error message.
-    #[serde(rename = "error")]
+    #[serde(rename = "error",skip_serializing_if="Option::is_none")]
     pub error: Option<String>,
     /// The amount of time in milliseconds the client should wait before trying the request again.
-    #[serde(rename = "retry_after_ms")]
+    #[serde(rename = "retry_after_ms",skip_serializing_if="Option::is_none")]
     pub retry_after_ms: Option<i32>,
 }
 
