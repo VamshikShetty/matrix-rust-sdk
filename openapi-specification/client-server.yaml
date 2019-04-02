@@ -927,9 +927,9 @@ components:
           additionalProperties:
             type: integer
             description: 'Information on end-to-end encryption keys, as specified in |device_lists_sync|.'
+  
   securitySchemes:
     accessToken:
-      type: apiKey
-      description: The access_token returned by a call to `/login` or `/register`
-      name: access_token
-      in: query
+      type: http
+      scheme: basic
+      description: The `access_token` returned by a call to `/login` or `/register`
