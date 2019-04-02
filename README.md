@@ -21,7 +21,7 @@ Structure of matrix rust SDK project
 ```
 cd <path>/openapi-generator/
 
-java -jar modules/openapi-generator-cli/target/openapi-generator-cli.jar generate -i ..\matrix-rust-sdk\openapi-specification\client-server.yaml -c ..\matrix-rust-sdk\openapi-config\client-server.json -g rust-server -o ..\matrix-rust-sdk\matrix
+java -jar modules/openapi-generator-cli/target/openapi-generator-cli.jar generate -i ..\matrix-rust-sdk\openapi-specification\client-server.yaml -c ..\matrix-rust-sdk\openapi-config\client-server.json -g rust -o ..\matrix-rust-sdk\matrix
 
 ```
 

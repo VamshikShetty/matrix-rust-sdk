@@ -27,6 +27,7 @@ Class | Method | HTTP request | Description
 *EndToEndEncryptionApi* | [**query_keys**](docs/EndToEndEncryptionApi.md#query_keys) | **post** /keys/query | Download device identity keys.
 *EndToEndEncryptionApi* | [**upload_keys**](docs/EndToEndEncryptionApi.md#upload_keys) | **post** /keys/upload | Upload end-to-end encryption keys.
 *RoomParticipationApi* | [**send_event_txnid**](docs/RoomParticipationApi.md#send_event_txnid) | **put** /rooms/{roomId}/send/{eventType}/{txnId} | Send a message event to the given room.
+*RoomParticipationApi* | [**sync**](docs/RoomParticipationApi.md#sync) | **get** /sync | Synchronise the client's state and receive new messages.
 *SendToDeviceMessagingApi* | [**send_to_device**](docs/SendToDeviceMessagingApi.md#send_to_device) | **put** /sendToDevice/{eventType}/{txnId} | Send an event to a given set of devices.
 *SessionManagementApi* | [**get_login_flows**](docs/SessionManagementApi.md#get_login_flows) | **get** /login | Get the supported login types to authenticate users
 *SessionManagementApi* | [**login**](docs/SessionManagementApi.md#login) | **post** /login | Authenticates the user.
@@ -36,8 +37,11 @@ Class | Method | HTTP request | Description
 
  - [Body](docs/Body.md)
  - [DeviceKeys](docs/DeviceKeys.md)
+ - [DeviceLists](docs/DeviceLists.md)
  - [Error](docs/Error.md)
+ - [Event](docs/Event.md)
  - [KeysUpload](docs/KeysUpload.md)
+ - [ListOfEvent](docs/ListOfEvent.md)
  - [LoginFlow](docs/LoginFlow.md)
  - [LoginRequestBody](docs/LoginRequestBody.md)
  - [Model200KeysUpload](docs/Model200KeysUpload.md)
@@ -48,6 +52,19 @@ Class | Method | HTTP request | Description
  - [Model200Void](docs/Model200Void.md)
  - [QueryKeys](docs/QueryKeys.md)
  - [RateLimited](docs/RateLimited.md)
+ - [SyncAccountData](docs/SyncAccountData.md)
+ - [SyncPresence](docs/SyncPresence.md)
+ - [SyncResponse](docs/SyncResponse.md)
+ - [SyncRooms](docs/SyncRooms.md)
+ - [SyncRoomsInvited](docs/SyncRoomsInvited.md)
+ - [SyncRoomsInvitedEvents](docs/SyncRoomsInvitedEvents.md)
+ - [SyncRoomsLeave](docs/SyncRoomsLeave.md)
+ - [SyncRoomsLeaveState](docs/SyncRoomsLeaveState.md)
+ - [SyncRoomsStateEvents](docs/SyncRoomsStateEvents.md)
+ - [Timeline](docs/Timeline.md)
+ - [TimelineEvents](docs/TimelineEvents.md)
+ - [UnreadNotifications](docs/UnreadNotifications.md)
+ - [UnsignedData](docs/UnsignedData.md)
  - [UserIdentifier](docs/UserIdentifier.md)
 
 

@@ -30,6 +30,7 @@ impl RoomParticipationApiClient {
 
 pub trait RoomParticipationApi {
     fn send_event_txnid(&self, room_id: &str, event_type: &str, txn_id: &str, body: Value) -> Result<::models::Model200SendEventTxnid, Error>;
+    fn sync(&self, filter: &str, since: &str, full_state: bool, set_presence: &str, timeout: i32) -> Result<::models::SyncResponse, Error>;
 }
 
 impl RoomParticipationApi for RoomParticipationApiClient {
@@ -52,6 +53,36 @@ impl RoomParticipationApi for RoomParticipationApiClient {
             req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());
         }
         req_builder = req_builder.json(&body);
+
+        // send request
+        let req = req_builder.build()?;
+
+        Ok(client.execute(req)?.error_for_status()?.json()?)
+    }
+
+    fn sync(&self, filter: &str, since: &str, full_state: bool, set_presence: &str, timeout: i32) -> Result<::models::SyncResponse, Error> {
+        let configuration: &configuration::Configuration = self.configuration.borrow();
+        let client = &configuration.client;
+
+        let uri_str = format!("{}/sync", configuration.base_path);
+        let mut req_builder = client.get(uri_str.as_str());
+
+        req_builder = req_builder.query(&[("filter", &filter.to_string())]);
+        req_builder = req_builder.query(&[("since", &since.to_string())]);
+        req_builder = req_builder.query(&[("full_state", &full_state.to_string())]);
+        req_builder = req_builder.query(&[("set_presence", &set_presence.to_string())]);
+        req_builder = req_builder.query(&[("timeout", &timeout.to_string())]);
+        if let Some(ref apikey) = configuration.api_key {
+            let key = apikey.key.clone();
+            let val = match apikey.prefix {
+                Some(ref prefix) => format!("{} {}", prefix, key),
+                None => key,
+            };
+            req_builder = req_builder.query(&[("access_token", val)]);
+        }
+        if let Some(ref user_agent) = configuration.user_agent {
+            req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());
+        }
 
         // send request
         let req = req_builder.build()?;
