@@ -775,25 +775,27 @@ components:
           type: string
           description: 'A token that can be supplied to the from parameter of the rooms /{roomId}/messages endpoint.'
         events:
-          type: object
-          properties:
-            content:
-              type: object
-              description: 'Fields in this object will vary depending on the type of event. When interacting with the REST API, this is the HTTP body.'
-            type:
-              type: string
-              description: The type of event. This SHOULD be namespaced similar to Java package naming conventions e.g. `com.example.subdomain.event.type`
-            event_id:
-              type: string
-              description: The globally unique event identifier.
-            sender:
-              type: string
-              description: Contains the fully-qualified ID of the user who sent this event.
-            origin_server_ts:
-              type: integer
-              description: Timestamp in milliseconds on originating homeserver when this event was sent.
-            unsigned:
-              $ref: '#/components/schemas/UnsignedData'
+          type: array
+          items:
+            type: object
+            properties:
+              content:
+                type: object
+                description: 'Fields in this object will vary depending on the type of event. When interacting with the REST API, this is the HTTP body.'
+              type:
+                type: string
+                description: The type of event. This SHOULD be namespaced similar to Java package naming conventions e.g. `com.example.subdomain.event.type`
+              event_id:
+                type: string
+                description: The globally unique event identifier.
+              sender:
+                type: string
+                description: Contains the fully-qualified ID of the user who sent this event.
+              origin_server_ts:
+                type: integer
+                description: Timestamp in milliseconds on originating homeserver when this event was sent.
+              unsigned:
+                $ref: '#/components/schemas/UnsignedData'
     sync_rooms_state_events:
       type: object
       properties:
@@ -865,31 +867,24 @@ components:
               sender:
                 type: string
                 description: Required. The sender for the event.
+
+
     sync_rooms_leave:
       type: object
       properties:
         state:
-          type: object
-          description: The state updates for the room up to the start of the timeline.
-          properties:
-            events:
-              $ref: '#/components/schemas/list_of_event'
+          $ref: '#/components/schemas/list_of_event'
         timeline:
           $ref: '#/components/schemas/timeline'
         account_data:
           $ref: '#/components/schemas/sync_account_data'
+
     sync_account_data:
-      type: object
-      description: The private data that this user has attached to this room.
-      properties:
-        events:
           $ref: '#/components/schemas/list_of_event'
+          
     sync_presence:
-      type: object
-      description: The updates to the presence status of other users.
-      properties:
-        events:
-          $ref: '#/components/schemas/list_of_event'
+        $ref: '#/components/schemas/list_of_event'
+
     sync_response:
       type: object
       description: The initial snapshot or delta for the client to use to update their state.
@@ -903,6 +898,7 @@ components:
           $ref: '#/components/schemas/sync_presence'
         account_data:
           $ref: '#/components/schemas/sync_account_data'
+          
         to_device:
           title: ToDevice
           type: object
@@ -930,6 +926,7 @@ components:
   
   securitySchemes:
     accessToken:
-      type: http
-      scheme: basic
-      description: The `access_token` returned by a call to `/login` or `/register`
+      type: apiKey
+      description: The access_token returned by a call to `/login` or `/register`
+      name: access_token
+      in: query
