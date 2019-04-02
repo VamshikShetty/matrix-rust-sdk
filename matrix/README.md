@@ -59,7 +59,6 @@ Class | Method | HTTP request | Description
  - [SyncRoomsInvited](docs/SyncRoomsInvited.md)
  - [SyncRoomsInvitedEvents](docs/SyncRoomsInvitedEvents.md)
  - [SyncRoomsLeave](docs/SyncRoomsLeave.md)
- - [SyncRoomsLeaveState](docs/SyncRoomsLeaveState.md)
  - [SyncRoomsStateEvents](docs/SyncRoomsStateEvents.md)
  - [Timeline](docs/Timeline.md)
  - [TimelineEvents](docs/TimelineEvents.md)

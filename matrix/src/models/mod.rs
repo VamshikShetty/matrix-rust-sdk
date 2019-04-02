@@ -46,8 +46,6 @@ mod sync_rooms_invited_events;
 pub use self::sync_rooms_invited_events::SyncRoomsInvitedEvents;
 mod sync_rooms_leave;
 pub use self::sync_rooms_leave::SyncRoomsLeave;
-mod sync_rooms_leave_state;
-pub use self::sync_rooms_leave_state::SyncRoomsLeaveState;
 mod sync_rooms_state_events;
 pub use self::sync_rooms_state_events::SyncRoomsStateEvents;
 mod timeline;

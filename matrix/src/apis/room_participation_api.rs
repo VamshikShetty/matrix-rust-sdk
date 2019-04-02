@@ -67,11 +67,26 @@ impl RoomParticipationApi for RoomParticipationApiClient {
         let uri_str = format!("{}/sync", configuration.base_path);
         let mut req_builder = client.get(uri_str.as_str());
 
-        req_builder = req_builder.query(&[("filter", &filter.to_string())]);
-        req_builder = req_builder.query(&[("since", &since.to_string())]);
-        req_builder = req_builder.query(&[("full_state", &full_state.to_string())]);
-        req_builder = req_builder.query(&[("set_presence", &set_presence.to_string())]);
-        req_builder = req_builder.query(&[("timeout", &timeout.to_string())]);
+        let query_filter = &filter.to_string();
+        if ! query_filter.is_empty() {
+            req_builder = req_builder.query(&[("filter", query_filter)]);
+        }
+        let query_since = &since.to_string();
+        if ! query_since.is_empty() {
+            req_builder = req_builder.query(&[("since", query_since)]);
+        }
+        let query_full_state = &full_state.to_string();
+        if ! query_full_state.is_empty() {
+            req_builder = req_builder.query(&[("full_state", query_full_state)]);
+        }
+        let query_set_presence = &set_presence.to_string();
+        if ! query_set_presence.is_empty() {
+            req_builder = req_builder.query(&[("set_presence", query_set_presence)]);
+        }
+        let query_timeout = &timeout.to_string();
+        if ! query_timeout.is_empty() {
+            req_builder = req_builder.query(&[("timeout", query_timeout)]);
+        }
         if let Some(ref apikey) = configuration.api_key {
             let key = apikey.key.clone();
             let val = match apikey.prefix {

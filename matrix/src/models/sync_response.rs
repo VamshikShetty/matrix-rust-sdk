@@ -21,9 +21,9 @@ pub struct SyncResponse {
     #[serde(rename = "rooms",skip_serializing_if="Option::is_none")]
     pub rooms: Option<::models::SyncRooms>,
     #[serde(rename = "presence",skip_serializing_if="Option::is_none")]
-    pub presence: Option<::models::SyncPresence>,
+    pub presence: Option<::models::ListOfEvent>,
     #[serde(rename = "account_data",skip_serializing_if="Option::is_none")]
-    pub account_data: Option<::models::SyncAccountData>,
+    pub account_data: Option<::models::ListOfEvent>,
     /// Information on the send-to-device messages for the client device, as defined in |send_to_device_sync|.
     #[serde(rename = "to_device",skip_serializing_if="Option::is_none")]
     pub to_device: Option<Value>,

@@ -15,11 +15,11 @@ use serde_json::Value;
 #[derive(Debug, Serialize, Deserialize)]
 pub struct SyncRoomsLeave {
     #[serde(rename = "state",skip_serializing_if="Option::is_none")]
-    pub state: Option<::models::SyncRoomsLeaveState>,
+    pub state: Option<::models::ListOfEvent>,
     #[serde(rename = "timeline",skip_serializing_if="Option::is_none")]
     pub timeline: Option<::models::Timeline>,
     #[serde(rename = "account_data",skip_serializing_if="Option::is_none")]
-    pub account_data: Option<::models::SyncAccountData>,
+    pub account_data: Option<::models::ListOfEvent>,
 }
 
 impl SyncRoomsLeave {
