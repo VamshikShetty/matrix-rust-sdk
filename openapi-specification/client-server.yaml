@@ -484,6 +484,7 @@ components:
           description: A human-readable error message.
           example: An unknown error occurred
       description: A Matrix-level Error
+    
     device_keys:
       title: DeviceKeys
       type: object
@@ -497,6 +498,7 @@ components:
           type: string
           description: The ID of the device these keys belong to. Must match the device ID used when logging in.
           example: JLAFKJWSCS
+          
         algorithms:
           type: array
           description: The encryption algorithms supported by this device.
@@ -515,24 +517,35 @@ components:
             'ed25519:JLAFKJWSCS': lEuiRJBit0IG6nUf5pUzWTUEsRVVe/HJkoKuEww9ULI
         signatures:
           type: object
+          description: Signatures for the device key object. A map from user ID, to a map from `<algorithm>:<device_id>` to the signature. The signature is calculated using the process described at `Signing JSON`.
           additionalProperties:
             type: object
             additionalProperties:
               type: string
-          description: |-
-            Signatures for the device key object. A map from user ID, to a map from
-            ``<algorithm>:<device_id>`` to the signature.
-            The signature is calculated using the process described at `Signing
-            JSON`_.
           example:
             '@alice:example.com':
               'ed25519:JLAFKJWSCS': dSO80A01XiigH3uBiDVx/EjzaoycHcjq9lfQX0uWsqxl2giMIiSPR8a4d291W1ihKJL/a+myXS367WT6NAIcBA
+              
+        unsigned:
+          $ref: "#/components/schemas/UnsignedDeviceInfo"
+              
       required:
         - algorithms
         - device_id
         - keys
         - signatures
         - user_id
+        
+        
+    UnsignedDeviceInfo:
+      type: object
+      description: Additional data added to the device key information by intermediate servers, and not covered by the signatures.
+      properties:
+        device_display_name:
+          type: string
+          description: The display name which the user set on the device.
+      
+      
     keys_upload:
       type: object
       properties:
@@ -557,15 +570,16 @@ components:
               signatures:
                 '@alice:example.com':
                   'ed25519:JLAFKJWSCS': IQeCEPb9HFk217cU9kw9EOiusC6kMIkoIRnbnfOh5Oc63S1ghgyjShBGpu34blQomoalCyXWyhaaT3MrLZYQAA
+    
     query_keys:
       type: object
       properties:
+        
         timeout:
           type: integer
-          description: |-
-            The time (in milliseconds) to wait when downloading keys from
-            remote servers. 10 seconds is the recommended default.
+          description: The time (in milliseconds) to wait when downloading keys from remote servers. 10 seconds is the recommended default.
           example: 10000
+        
         device_keys:
           type: object
           additionalProperties:
@@ -573,22 +587,21 @@ components:
             items:
               type: string
               description: device ID
-          description: |-
-            The keys to be downloaded. A map from user ID, to a list of
-            device IDs, or to an empty list to indicate all devices for the
-            corresponding user.
-          example:
+          description: The keys to be downloaded. A map from user ID, to a list of device IDs, or to an empty list to indicate all devices for the corresponding user.
+          example: 
             '@alice:example.com': []
+        
         token:
           type: string
-          description: |-
-            If the client is fetching keys as a result of a device update received
-            in a sync request, this should be the 'since' token of that sync request,
-            or any later sync token. This allows the server to ensure its response
-            contains the keys advertised by the notification in that sync.
+          description: If the client is fetching keys as a result of a device update received in a sync request, this should be the 'since' token of that sync request, or any later sync token. This allows the server to ensure its response contains the keys advertised by the notification in that sync.
+      
       required:
         - device_keys
+    
+    
     200_void: {}
+    
+    
     200_login_get:
       type: object
       properties:
@@ -602,6 +615,7 @@ components:
               type:
                 type: string
                 description: The login type. This is supplied as the ``type`` when logging in.
+                
     200_login_put:
       type: object
       properties:
@@ -626,6 +640,8 @@ components:
           description: |-
             ID of the logged-in device. Will be the same as the
             corresponding parameter in the request, if one was specified. 
+            
+            
     200_keys_upload:
       type: object
       properties:
@@ -639,40 +655,30 @@ components:
             signed_curve25519: 20
       required:
         - one_time_key_counts
+        
+        
     200_query_keys:
       type: object
       properties:
         failures:
+          description: If any remote homeservers could not be reached, they are recorded here. The names of the properties are the names of the unreachable servers. If the homeserver could be reached, but the user or device was unknown, no failure is recorded. Instead, the corresponding user or device is missing from the `device_keys` result.
           type: object
           additionalProperties:
             type: object
             properties: {}
-          description: 'If any remote homeservers could not be reached, they are recorded here. The names of the properties are the names of the unreachable servers. If the homeserver could be reached, but the user or device was unknown, no failure is recorded. Instead, the corresponding user or device is missing from the `device_keys` result.'
-          example: {}
+
         device_keys:
           type: object
           additionalProperties:
             type: object
             additionalProperties:
-              type: object
-              properties:
-                unsigned:
-                  title: UnsignedDeviceInfo
-                  type: object
-                  properties:
-                    device_display_name:
-                      type: string
-                      description: The display name which the user set on the device.
-                  description: |-
-                    Additional data added to the device key information
-                    by intermediate servers, and not covered by the
-                    signatures.
-          description: |-
-            Information on the queried devices. A map from user ID, to a
+                $ref: "#/components/schemas/device_keys"
+          description: Information on the queried devices. A map from user ID, to a
             map from device ID to device information.  For each device,
             the information returned will be the same as uploaded via
             ``/keys/upload``, with the addition of an ``unsigned``
             property.
+            
           example:
             '@alice:example.com':
               JLAFKJWSCS:
