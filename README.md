@@ -33,6 +33,7 @@ java -jar modules/openapi-generator-cli/target/openapi-generator-cli.jar generat
 ```
 
 ## Running a test samples
-1. cargo run --example login_get
-2. cargo run --example login_put "\<username\>" "\<password\>"
-3. cargo run --example sync_get "\<access_token\>"
+1. ` cargo run --example login_get `
+2. ` cargo run --example login_post "\<username\>" "\<password\>" `
+3. ` cargo run --example sync_get "\<access_token\>" `
+4. ` cargo run --example query_keys "\<access_token\>" "\<userId\>" "\<token\>" ` here token refers to 'since' token of sync request or any later sync token. example: "s900983005_757245500_40422" which we get corresponding to next_batch of /sync response.
