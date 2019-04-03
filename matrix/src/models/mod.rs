@@ -56,5 +56,7 @@ mod unread_notifications;
 pub use self::unread_notifications::UnreadNotifications;
 mod unsigned_data;
 pub use self::unsigned_data::UnsignedData;
+mod unsigned_device_info;
+pub use self::unsigned_device_info::UnsignedDeviceInfo;
 mod user_identifier;
 pub use self::user_identifier::UserIdentifier;

@@ -19,7 +19,7 @@ pub struct Model200QueryKeys {
     pub failures: Option<::std::collections::HashMap<String, Value>>,
     /// Information on the queried devices. A map from user ID, to a map from device ID to device information.  For each device, the information returned will be the same as uploaded via ``/keys/upload``, with the addition of an ``unsigned`` property.
     #[serde(rename = "device_keys",skip_serializing_if="Option::is_none")]
-    pub device_keys: Option<::std::collections::HashMap<String, ::std::collections::HashMap<String, Value>>>,
+    pub device_keys: Option<::std::collections::HashMap<String, ::std::collections::HashMap<String, ::models::DeviceKeys>>>,
 }
 
 impl Model200QueryKeys {

@@ -64,6 +64,7 @@ Class | Method | HTTP request | Description
  - [TimelineEvents](docs/TimelineEvents.md)
  - [UnreadNotifications](docs/UnreadNotifications.md)
  - [UnsignedData](docs/UnsignedData.md)
+ - [UnsignedDeviceInfo](docs/UnsignedDeviceInfo.md)
  - [UserIdentifier](docs/UserIdentifier.md)
 
 

@@ -27,9 +27,11 @@ pub struct DeviceKeys {
     /// Public identity keys. The names of the properties should be in the format `<algorithm>:<device_id>`. The keys themselves should be encoded as specified by the key algorithm.
     #[serde(rename = "keys")]
     pub keys: ::std::collections::HashMap<String, String>,
-    /// Signatures for the device key object. A map from user ID, to a map from ``<algorithm>:<device_id>`` to the signature. The signature is calculated using the process described at `Signing JSON`_.
+    /// Signatures for the device key object. A map from user ID, to a map from `<algorithm>:<device_id>` to the signature. The signature is calculated using the process described at `Signing JSON`.
     #[serde(rename = "signatures")]
     pub signatures: ::std::collections::HashMap<String, ::std::collections::HashMap<String, String>>,
+    #[serde(rename = "unsigned",skip_serializing_if="Option::is_none")]
+    pub unsigned: Option<::models::UnsignedDeviceInfo>,
 }
 
 impl DeviceKeys {
@@ -41,6 +43,7 @@ impl DeviceKeys {
             algorithms: algorithms,
             keys: keys,
             signatures: signatures,
+            unsigned: None,
         }
     }
 }
