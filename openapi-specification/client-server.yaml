@@ -174,6 +174,8 @@ paths:
                 $ref: '#/components/schemas/200_query_keys'
       security:
         - accessToken: []
+        
+        
   '/sendToDevice/{eventType}/{txnId}':
     put:
       tags:
@@ -201,23 +203,14 @@ paths:
         content:
           application/json:
             schema:
-              title: body
+              title: send_to_device_request_body
               type: object
-              properties:
-                messages:
-                  type: object
-                  additionalProperties:
-                    type: object
-                    additionalProperties:
-                      title: EventContent
-                      type: object
-                      properties: {}
-                      description: Message content
-                  description: 'The messages to send. A map from user ID, to a map from device ID to message body. The device ID may also be `*`, meaning all known devices for the user.'
-                  example:
-                    '@alice:example.com':
-                      TLLBEANAAG:
-                        example_content_key: value
+              additionalProperties:
+                type: object
+                description: The messages to send. A map from user ID, to a map from device ID to message body. The device ID may also be `*`, meaning all known devices for the user.
+                additionalProperties:
+                  $ref: "#/components/schemas/EventContent"
+              
         required: true
       responses:
         '200':
@@ -228,6 +221,9 @@ paths:
                 $ref: '#/components/schemas/200_void'
       security:
         - accessToken: []
+        
+        
+        
   /sync:
     get:
       tags:
@@ -484,7 +480,6 @@ components:
           description: A human-readable error message.
           example: An unknown error occurred
       description: A Matrix-level Error
-    
     device_keys:
       title: DeviceKeys
       type: object
@@ -498,7 +493,6 @@ components:
           type: string
           description: The ID of the device these keys belong to. Must match the device ID used when logging in.
           example: JLAFKJWSCS
-          
         algorithms:
           type: array
           description: The encryption algorithms supported by this device.
@@ -517,7 +511,7 @@ components:
             'ed25519:JLAFKJWSCS': lEuiRJBit0IG6nUf5pUzWTUEsRVVe/HJkoKuEww9ULI
         signatures:
           type: object
-          description: Signatures for the device key object. A map from user ID, to a map from `<algorithm>:<device_id>` to the signature. The signature is calculated using the process described at `Signing JSON`.
+          description: 'Signatures for the device key object. A map from user ID, to a map from `<algorithm>:<device_id>` to the signature. The signature is calculated using the process described at `Signing JSON`.'
           additionalProperties:
             type: object
             additionalProperties:
@@ -525,35 +519,46 @@ components:
           example:
             '@alice:example.com':
               'ed25519:JLAFKJWSCS': dSO80A01XiigH3uBiDVx/EjzaoycHcjq9lfQX0uWsqxl2giMIiSPR8a4d291W1ihKJL/a+myXS367WT6NAIcBA
-              
         unsigned:
-          $ref: "#/components/schemas/UnsignedDeviceInfo"
-              
+          $ref: '#/components/schemas/UnsignedDeviceInfo'
       required:
         - algorithms
         - device_id
         - keys
         - signatures
         - user_id
-        
-        
     UnsignedDeviceInfo:
       type: object
-      description: Additional data added to the device key information by intermediate servers, and not covered by the signatures.
+      description: 'Additional data added to the device key information by intermediate servers, and not covered by the signatures.'
       properties:
         device_display_name:
           type: string
           description: The display name which the user set on the device.
-      
-      
     keys_upload:
       type: object
       properties:
         device_keys:
           type: object
           description: Identity keys for the device. May be absent if no new identity keys are required.
-          allOf:
-            - $ref: '#/components/schemas/device_keys'
+          properties:
+            user_id:
+              type: string
+            device_id:
+              type: string
+            algorithms:
+              type: array
+              items:
+                type: string
+            keys:
+              type: object
+              additionalProperties:
+                type: string
+            signatures:
+              type: object
+              additionalProperties:
+                type: object
+                additionalProperties:
+                  type: string
         one_time_keys:
           type: object
           properties: {}
@@ -570,16 +575,13 @@ components:
               signatures:
                 '@alice:example.com':
                   'ed25519:JLAFKJWSCS': IQeCEPb9HFk217cU9kw9EOiusC6kMIkoIRnbnfOh5Oc63S1ghgyjShBGpu34blQomoalCyXWyhaaT3MrLZYQAA
-    
     query_keys:
       type: object
       properties:
-        
         timeout:
           type: integer
           description: The time (in milliseconds) to wait when downloading keys from remote servers. 10 seconds is the recommended default.
           example: 10000
-        
         device_keys:
           type: object
           additionalProperties:
@@ -587,21 +589,15 @@ components:
             items:
               type: string
               description: device ID
-          description: The keys to be downloaded. A map from user ID, to a list of device IDs, or to an empty list to indicate all devices for the corresponding user.
-          example: 
+          description: 'The keys to be downloaded. A map from user ID, to a list of device IDs, or to an empty list to indicate all devices for the corresponding user.'
+          example:
             '@alice:example.com': []
-        
         token:
           type: string
-          description: If the client is fetching keys as a result of a device update received in a sync request, this should be the 'since' token of that sync request, or any later sync token. This allows the server to ensure its response contains the keys advertised by the notification in that sync.
-      
+          description: 'If the client is fetching keys as a result of a device update received in a sync request, this should be the ''since'' token of that sync request, or any later sync token. This allows the server to ensure its response contains the keys advertised by the notification in that sync.'
       required:
         - device_keys
-    
-    
     200_void: {}
-    
-    
     200_login_get:
       type: object
       properties:
@@ -615,7 +611,6 @@ components:
               type:
                 type: string
                 description: The login type. This is supplied as the ``type`` when logging in.
-                
     200_login_put:
       type: object
       properties:
@@ -640,45 +635,35 @@ components:
           description: |-
             ID of the logged-in device. Will be the same as the
             corresponding parameter in the request, if one was specified. 
-            
-            
     200_keys_upload:
       type: object
       properties:
         one_time_key_counts:
+          description: 'For each key algorithm, the number of unclaimed one-time keys of that type currently held on the server for this device.'
           type: object
           additionalProperties:
             type: integer
-          description: 'For each key algorithm, the number of unclaimed one-time keys of that type currently held on the server for this device.'
           example:
             curve25519: 10
             signed_curve25519: 20
       required:
         - one_time_key_counts
-        
-        
     200_query_keys:
       type: object
       properties:
         failures:
-          description: If any remote homeservers could not be reached, they are recorded here. The names of the properties are the names of the unreachable servers. If the homeserver could be reached, but the user or device was unknown, no failure is recorded. Instead, the corresponding user or device is missing from the `device_keys` result.
+          description: 'If any remote homeservers could not be reached, they are recorded here. The names of the properties are the names of the unreachable servers. If the homeserver could be reached, but the user or device was unknown, no failure is recorded. Instead, the corresponding user or device is missing from the `device_keys` result.'
           type: object
           additionalProperties:
             type: object
             properties: {}
-
         device_keys:
           type: object
           additionalProperties:
             type: object
             additionalProperties:
-                $ref: "#/components/schemas/device_keys"
-          description: Information on the queried devices. A map from user ID, to a
-            map from device ID to device information.  For each device,
-            the information returned will be the same as uploaded via
-            ``/keys/upload``, with the addition of an ``unsigned``
-            property.
-            
+              $ref: '#/components/schemas/device_keys'
+          description: 'Information on the queried devices. A map from user ID, to a map from device ID to device information.  For each device, the information returned will be the same as uploaded via ``/keys/upload``, with the addition of an ``unsigned`` property.'
           example:
             '@alice:example.com':
               JLAFKJWSCS:
@@ -710,8 +695,8 @@ components:
       properties:
         join:
           $ref: '#/components/schemas/sync_rooms_join'
-        invited:
-          $ref: '#/components/schemas/sync_rooms_invited'
+        invite:
+          $ref: '#/components/schemas/sync_rooms_invite'
         leave:
           $ref: '#/components/schemas/sync_rooms_leave'
     sync_rooms_join:
@@ -850,31 +835,93 @@ components:
         type:
           type: string
           description: The type of event. This SHOULD be namespaced similar to Java package naming conventions e.g. `com.example.subdomain.event.type`
-    sync_rooms_invited:
+    sync_rooms_invite:
       type: object
       description: 'The state of a room that the user has been invited to. These state events may only have the sender, type, state_key and content keys present. These events do not replace any state that the client already has for the room, for example if the client has archived the room. Instead the client should keep two separate copies of the `state:` the one from the invite_state and one from the archived state. If the client joins the room then the current state will be given as a delta against the archived state not the invite_state.'
+      properties:
+        invite_state:
+          $ref: '#/components/schemas/invite_state'
+    invite_state:
+      type: object
       properties:
         events:
           type: array
           description: array of StrippedState
           items:
-            type: object
-            description: The StrippedState events that form the invite state.
-            properties:
-              content:
-                type: object
-                description: Required. The content for the event.
-              state_key:
-                type: string
-                description: Required. The state_key for the event.
-              type:
-                type: string
-                description: Required. The type for the event.
-              sender:
-                type: string
-                description: Required. The sender for the event.
-
-
+            $ref: '#/components/schemas/StrippedState'
+    StrippedState:
+      type: object
+      description: The StrippedState events that form the invite state.
+      properties:
+        content:
+          $ref: '#/components/schemas/EventContent'
+          description: Required. The content for the event.
+        state_key:
+          type: string
+          description: Required. The state_key for the event.
+        type:
+          type: string
+          description: Required. The type for the event.
+        sender:
+          type: string
+          description: Required. The sender for the event.
+      required:
+        - content
+        - state_key
+        - type
+        - sender
+    EventContent:
+      type: object
+      properties:
+        avatar_url:
+          type: string
+          description: 'The avatar URL for this user, if any. This is added by the homeserver.'
+        displayname:
+          type: string
+          nullable: true
+          description: 'The display name for this user, if any. This is added by the homeserver.'
+        membership:
+          enum:
+            - invite
+            - join
+            - knock
+            - leave
+            - ban
+          description: The membership state of the user.
+        is_direct:
+          type: boolean
+          description: Flag indicating if the room containing this event was created with the intention of being a direct chat. See Direct Messaging.
+        third_party_invite:
+          $ref: '#/components/schemas/Invite'
+        unsigned:
+          $ref: '#/components/schemas/UnsignedData'
+    Invite:
+      type: object
+      properties:
+        display_name:
+          type: string
+          description: A name which can be displayed to represent the user instead of their third party identifier
+        signed:
+          $ref: '#/components/schemas/signed'
+          
+    signed:
+      type: object
+      description: A block of content which has been signed, which servers can use to verify the event. Clients should ignore this.
+      properties:
+        mxid:
+          type: string
+          description: The invited matrix user ID. Must be equal to the user_id property of the event.
+          
+        signatures:
+          type: object
+          description: A single signature from the verifying server, in the format specified by the Signing Events section of the server-server API.
+          
+        token:
+          type: string
+          description: The token property of the containing third_party_invite object.
+    
+    
+    
     sync_rooms_leave:
       type: object
       properties:
@@ -884,13 +931,10 @@ components:
           $ref: '#/components/schemas/timeline'
         account_data:
           $ref: '#/components/schemas/sync_account_data'
-
     sync_account_data:
-          $ref: '#/components/schemas/list_of_event'
-          
+      $ref: '#/components/schemas/list_of_event'
     sync_presence:
-        $ref: '#/components/schemas/list_of_event'
-
+      $ref: '#/components/schemas/list_of_event'
     sync_response:
       type: object
       description: The initial snapshot or delta for the client to use to update their state.
@@ -904,7 +948,6 @@ components:
           $ref: '#/components/schemas/sync_presence'
         account_data:
           $ref: '#/components/schemas/sync_account_data'
-          
         to_device:
           title: ToDevice
           type: object
@@ -929,7 +972,6 @@ components:
           additionalProperties:
             type: integer
             description: 'Information on end-to-end encryption keys, as specified in |device_lists_sync|.'
-  
   securitySchemes:
     accessToken:
       type: apiKey
