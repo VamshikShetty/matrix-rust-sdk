@@ -18,8 +18,8 @@ pub struct SyncRooms {
     /// The rooms that the user has joined.
     #[serde(rename = "join",skip_serializing_if="Option::is_none")]
     pub join: Option<::std::collections::HashMap<String, Value>>,
-    #[serde(rename = "invited",skip_serializing_if="Option::is_none")]
-    pub invited: Option<::models::SyncRoomsInvited>,
+    #[serde(rename = "invite",skip_serializing_if="Option::is_none")]
+    pub invite: Option<::models::SyncRoomsInvite>,
     #[serde(rename = "leave",skip_serializing_if="Option::is_none")]
     pub leave: Option<::models::SyncRoomsLeave>,
 }
@@ -29,7 +29,7 @@ impl SyncRooms {
     pub fn new() -> SyncRooms {
         SyncRooms {
             join: None,
-            invited: None,
+            invite: None,
             leave: None,
         }
     }

@@ -29,11 +29,11 @@ impl SendToDeviceMessagingApiClient {
 }
 
 pub trait SendToDeviceMessagingApi {
-    fn send_to_device(&self, event_type: &str, txn_id: &str, body: ::models::Body) -> Result<Value, Error>;
+    fn send_to_device(&self, event_type: &str, txn_id: &str, request_body: ::std::collections::HashMap<String, ::std::collections::HashMap<String, ::models::EventContent>>) -> Result<Value, Error>;
 }
 
 impl SendToDeviceMessagingApi for SendToDeviceMessagingApiClient {
-    fn send_to_device(&self, event_type: &str, txn_id: &str, body: ::models::Body) -> Result<Value, Error> {
+    fn send_to_device(&self, event_type: &str, txn_id: &str, request_body: ::std::collections::HashMap<String, ::std::collections::HashMap<String, ::models::EventContent>>) -> Result<Value, Error> {
         let configuration: &configuration::Configuration = self.configuration.borrow();
         let client = &configuration.client;
 
@@ -51,7 +51,7 @@ impl SendToDeviceMessagingApi for SendToDeviceMessagingApiClient {
         if let Some(ref user_agent) = configuration.user_agent {
             req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());
         }
-        req_builder = req_builder.json(&body);
+        req_builder = req_builder.json(&request_body);
 
         // send request
         let req = req_builder.build()?;
