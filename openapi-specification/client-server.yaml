@@ -137,10 +137,8 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              example:
-                msgtype: m.text
-                body: hello
+              $ref: "#/components/schemas/sendEventTxnid_body"
+              
         required: false
       responses:
         '200':
@@ -680,6 +678,13 @@ components:
                     'ed25519:JLAFKJWSCS': dSO80A01XiigH3uBiDVx/EjzaoycHcjq9lfQX0uWsqxl2giMIiSPR8a4d291W1ihKJL/a+myXS367WT6NAIcBA
                 unsigned:
                   device_display_name: Alice's mobile phone
+                  
+    sendEventTxnid_body:
+      type: object
+      example:
+        msgtype: m.text
+        body: hello
+      
     200_sendEventTxnid:
       type: object
       properties:
