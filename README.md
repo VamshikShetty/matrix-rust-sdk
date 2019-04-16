@@ -9,12 +9,12 @@ Structure of matrix rust SDK project
 	matrix-rust-sdk/
 		openapi-config/
 		openapi-specification/
-        sdk/
+        matrix/
             src/
                 api/      ( API methods )
                 models/   ( request and response structures)
                 lib.rs
-        samples/
+            examples/
 	openapi-generator/
 ```
 ### Command to generate the RUST SDK on our own
