@@ -5,6 +5,8 @@ info:
 servers:
   - url: 'https://matrix.org/_matrix/client/r0'
 paths:
+
+  # Session management
   /login:
     get:
       tags:
@@ -74,7 +76,35 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/rate_limited'
-  
+ 
+  /logout:
+    post:
+      tags:
+        - Session management
+      summary: Invalidates a user access token
+      description: Invalidates an existing access token, so that it can no longer be used for\nauthorization.
+      operationId: logout
+      responses:
+        200:
+          description: The access token used in the request was succesfully invalidated.
+
+      security:
+        - accessToken: []
+
+  /logout/all: 
+    post:
+      tags:
+        - Session management
+      description: Invalidates all access tokens for a user, so that they can no longer be used for\nauthorization. This includes the access token that made this request. \n\nThis endpoint does not require UI authorization because UI authorization is\ndesigned to protect against attacks where the someone gets hold of a single access\ntoken then takes over the account. This endpoint invalidates all access tokens for\nthe user, including the token used in the request, and therefore the attacker is\nunable to take over the account in this way.
+      operationId: logout_all
+      responses:
+        200:
+          description: The user's access tokens were succesfully invalidated.
+      security:
+        - accessToken: []
+
+
+
   # End-to-end encryption APIs
   /keys/upload:
     post:

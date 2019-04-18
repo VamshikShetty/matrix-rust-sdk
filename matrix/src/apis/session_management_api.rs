@@ -31,6 +31,8 @@ impl SessionManagementApiClient {
 pub trait SessionManagementApi {
     fn get_login_flows(&self, ) -> Result<::models::Model200LoginGet, Error>;
     fn login(&self, login_request_body: ::models::LoginRequestBody) -> Result<::models::Model200LoginPut, Error>;
+    fn logout(&self, ) -> Result<(), Error>;
+    fn logout_all(&self, ) -> Result<(), Error>;
 }
 
 impl SessionManagementApi for SessionManagementApiClient {
@@ -67,6 +69,58 @@ impl SessionManagementApi for SessionManagementApiClient {
         let req = req_builder.build()?;
 
         Ok(client.execute(req)?.error_for_status()?.json()?)
+    }
+
+    fn logout(&self, ) -> Result<(), Error> {
+        let configuration: &configuration::Configuration = self.configuration.borrow();
+        let client = &configuration.client;
+
+        let uri_str = format!("{}/logout", configuration.base_path);
+        let mut req_builder = client.post(uri_str.as_str());
+
+        if let Some(ref apikey) = configuration.api_key {
+            let key = apikey.key.clone();
+            let val = match apikey.prefix {
+                Some(ref prefix) => format!("{} {}", prefix, key),
+                None => key,
+            };
+            req_builder = req_builder.query(&[("access_token", val)]);
+        }
+        if let Some(ref user_agent) = configuration.user_agent {
+            req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());
+        }
+
+        // send request
+        let req = req_builder.build()?;
+
+        client.execute(req)?.error_for_status()?;
+        Ok(())
+    }
+
+    fn logout_all(&self, ) -> Result<(), Error> {
+        let configuration: &configuration::Configuration = self.configuration.borrow();
+        let client = &configuration.client;
+
+        let uri_str = format!("{}/logout/all", configuration.base_path);
+        let mut req_builder = client.post(uri_str.as_str());
+
+        if let Some(ref apikey) = configuration.api_key {
+            let key = apikey.key.clone();
+            let val = match apikey.prefix {
+                Some(ref prefix) => format!("{} {}", prefix, key),
+                None => key,
+            };
+            req_builder = req_builder.query(&[("access_token", val)]);
+        }
+        if let Some(ref user_agent) = configuration.user_agent {
+            req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());
+        }
+
+        // send request
+        let req = req_builder.build()?;
+
+        client.execute(req)?.error_for_status()?;
+        Ok(())
     }
 
 }

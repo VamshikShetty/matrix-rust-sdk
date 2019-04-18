@@ -33,6 +33,8 @@ Class | Method | HTTP request | Description
 *SendToDeviceMessagingApi* | [**send_to_device**](docs/SendToDeviceMessagingApi.md#send_to_device) | **put** /sendToDevice/{eventType}/{txnId} | Send an event to a given set of devices.
 *SessionManagementApi* | [**get_login_flows**](docs/SessionManagementApi.md#get_login_flows) | **get** /login | Get the supported login types to authenticate users
 *SessionManagementApi* | [**login**](docs/SessionManagementApi.md#login) | **post** /login | Authenticates the user.
+*SessionManagementApi* | [**logout**](docs/SessionManagementApi.md#logout) | **post** /logout | Invalidates a user access token
+*SessionManagementApi* | [**logout_all**](docs/SessionManagementApi.md#logout_all) | **post** /logout/all | 
 
 
 ## Documentation For Models

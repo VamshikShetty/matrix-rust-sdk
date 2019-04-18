@@ -6,6 +6,8 @@ Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**get_login_flows**](SessionManagementApi.md#get_login_flows) | **get** /login | Get the supported login types to authenticate users
 [**login**](SessionManagementApi.md#login) | **post** /login | Authenticates the user.
+[**logout**](SessionManagementApi.md#logout) | **post** /logout | Invalidates a user access token
+[**logout_all**](SessionManagementApi.md#logout_all) | **post** /logout/all | 
 
 
 
@@ -62,6 +64,60 @@ No authorization required
 
 - **Content-Type**: application/json
 - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
+## logout
+
+> logout(ctx, )
+Invalidates a user access token
+
+Invalidates an existing access token, so that it can no longer be used for\\nauthorization.
+
+### Required Parameters
+
+This endpoint does not need any parameter.
+
+### Return type
+
+ (empty response body)
+
+### Authorization
+
+[accessToken](../README.md#accessToken)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: Not defined
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
+## logout_all
+
+> logout_all(ctx, )
+
+
+Invalidates all access tokens for a user, so that they can no longer be used for\\nauthorization. This includes the access token that made this request. \\n\\nThis endpoint does not require UI authorization because UI authorization is\\ndesigned to protect against attacks where the someone gets hold of a single access\\ntoken then takes over the account. This endpoint invalidates all access tokens for\\nthe user, including the token used in the request, and therefore the attacker is\\nunable to take over the account in this way.
+
+### Required Parameters
+
+This endpoint does not need any parameter.
+
+### Return type
+
+ (empty response body)
+
+### Authorization
+
+[accessToken](../README.md#accessToken)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: Not defined
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
