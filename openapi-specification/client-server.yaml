@@ -74,6 +74,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/rate_limited'
+  
+  # End-to-end encryption APIs
   /keys/upload:
     post:
       tags:
@@ -97,7 +99,135 @@ paths:
                 $ref: '#/components/schemas/200_keys_upload'
       security:
         - accessToken: []
-  '/rooms/{roomId}/send/{eventType}/{txnId}':
+
+  /keys/query:
+    post:
+      tags:
+        - End-to-end encryption
+      summary: Download device identity keys.
+      description: Returns the current devices and identity keys for the given users.
+      operationId: queryKeys
+      requestBody:
+        description: Query defining the keys to be downloaded
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/query_keys'
+        required: false
+      responses:
+        '200':
+          description: The device information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/200_query_keys'
+      security:
+        - accessToken: []
+        
+  /keys/changes:
+    get:
+      tags: 
+        - End-to-end encryption
+      summary: Query users with recent device key updates.
+      description: Gets a list of users who have updated their device identity keys since a\nprevious sync token.\n\nThe server should include in the results any users who:\n\n* currently share a room with the calling user (ie, both users have\n  membership state ``join``); *and*\n* added new device identity keys or removed an existing device with\n  identity keys, between ``from`` and ``to``.
+      operationId: getKeysChanges
+      security:
+        - accessToken: []
+      parameters:
+        - description:  The desired start point of the list. Should be the ``next_batch`` field\nfrom a response to an earlier call to |/sync|. Users who have not\nuploaded new device identity keys since this point, nor deleted\nexisting devices with identity keys since then, will be excluded\nfrom the results.
+          in: query
+          name: from
+          required: true
+          schema:
+            type: string
+        - description: The desired end point of the list. Should be the ``next_batch``\nfield from a recent call to |/sync| - typically the most recent\nsuch call. This may be used by the server as a hint to check its\ncaches are up to date.
+          in: query
+          name: to
+          required: true
+          schema:  
+            type: string
+      responses: 
+        200: 
+          description: The list of users who updated their devices.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/200_getKeysChanges'
+
+  /keys/claim:
+    post:
+      tags:
+      - End-to-end encryption
+      summary: Claim one-time encryption keys.
+      description: Claims one-time keys for use in pre-key messages.
+      operationId: claimKeys
+      requestBody:
+        description: Query defining the keys to be claimed
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/claimKeys_request_body"
+      responses:
+        200:
+          description: The claimed keys
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/200_claimKeys"
+      security:
+      - accessToken: []
+
+
+
+
+  /sendToDevice/{eventType}/{txnId}:
+    put:
+      tags:
+        - Send-to-Device messaging
+      summary: Send an event to a given set of devices.
+      description: This endpoint is used to send send-to-device events to a set of client devices.
+      operationId: sendToDevice
+      parameters:
+        - name: eventType
+          in: path
+          description: The type of event to send.
+          required: true
+          schema:
+            type: string
+          example:
+            - m.new_device
+        - name: txnId
+          in: path
+          description: The transaction ID for this event. Clients should generate an ID unique across requests with the same access token; it will be used by the server to ensure idempotency of requests.
+          required: true
+          schema:
+            type: string
+          example: '35'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: send_to_device_request_body
+              type: object
+              additionalProperties:
+                type: object
+                description: The messages to send. A map from user ID, to a map from device ID to message body. The device ID may also be `*`, meaning all known devices for the user.
+                additionalProperties:
+                  $ref: "#/components/schemas/EventContent"
+              
+        required: true
+      responses:
+        '200':
+          description: The message was successfully sent.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/200_void'
+      security:
+        - accessToken: []
+        
+    
+  /rooms/{roomId}/send/{eventType}/{txnId}:
     put:
       tags:
         - Room participation
@@ -149,78 +279,8 @@ paths:
                 $ref: '#/components/schemas/200_sendEventTxnid'
       security:
         - accessToken: []
-  /keys/query:
-    post:
-      tags:
-        - End-to-end encryption
-      summary: Download device identity keys.
-      description: Returns the current devices and identity keys for the given users.
-      operationId: queryKeys
-      requestBody:
-        description: Query defining the keys to be downloaded
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/query_keys'
-        required: false
-      responses:
-        '200':
-          description: The device information
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/200_query_keys'
-      security:
-        - accessToken: []
-        
-        
-  '/sendToDevice/{eventType}/{txnId}':
-    put:
-      tags:
-        - Send-to-Device messaging
-      summary: Send an event to a given set of devices.
-      description: This endpoint is used to send send-to-device events to a set of client devices.
-      operationId: sendToDevice
-      parameters:
-        - name: eventType
-          in: path
-          description: The type of event to send.
-          required: true
-          schema:
-            type: string
-          example:
-            - m.new_device
-        - name: txnId
-          in: path
-          description: The transaction ID for this event. Clients should generate an ID unique across requests with the same access token; it will be used by the server to ensure idempotency of requests.
-          required: true
-          schema:
-            type: string
-          example: '35'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              title: send_to_device_request_body
-              type: object
-              additionalProperties:
-                type: object
-                description: The messages to send. A map from user ID, to a map from device ID to message body. The device ID may also be `*`, meaning all known devices for the user.
-                additionalProperties:
-                  $ref: "#/components/schemas/EventContent"
-              
-        required: true
-      responses:
-        '200':
-          description: The message was successfully sent.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/200_void'
-      security:
-        - accessToken: []
-        
-        
+  
+  
         
   /sync:
     get:
@@ -384,6 +444,7 @@ paths:
                             content:
                               membership: invite
                   leave: {}
+
 components:
   schemas:
     user_identifier:
@@ -419,6 +480,31 @@ components:
             before trying the request again.
           example: 2000
       description: The rate limit was reached for this request
+
+    claimKeys_request_body:
+      type: object
+      properties:
+        one_time_keys:
+          type: object
+          description: The keys to be claimed. A map from user ID, to a map from device ID to algorithm name.
+          additionalProperties:
+            type: object
+            additionalProperties:
+              type: string
+              description: algorithm
+              example: signed_curve25519
+          example:
+            '@alice:example.com':
+              JLAFKJWSCS: signed_curve25519
+        timeout:
+          type: integer
+          description: The time (in milliseconds) to wait when downloading keys from remote servers. 10 seconds is the recommended default.
+          example: 10000
+      required:
+        - one_time_keys
+
+
+
     login_request_body:
       required:
         - type
@@ -693,6 +779,65 @@ components:
           description: A unique identifier for the event.
       example:
         event_id: '$YUwRidLecu:example.com'
+        
+    200_getKeysChanges:
+      type: object
+      properties:
+        changed:
+          description: The Matrix User IDs of all users who updated their device\nidentity keys.
+          type: array
+          items:
+            type: string
+          example:
+            - "@alice:example.com"
+            - "@bob:example.org"
+        left:
+          description: The Matrix User IDs of all users who may have left all\nthe end-to-end encrypted rooms they previously shared\nwith the user.
+          type: array
+          items:
+            type: string
+          example:
+            - "@clara:example.com"
+            - "@doug:example.org"
+
+    
+    200_claimKeys:
+      type: object
+      properties:
+        failures:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+          description: |-
+            If any remote homeservers could not be reached, they are
+            recorded here. The names of the properties are the names of
+            the unreachable servers.
+
+            If the homeserver could be reached, but the user or device
+            was unknown, no failure is recorded. Instead, the corresponding
+            user or device is missing from the ``one_time_keys`` result.
+          example: {}
+        one_time_keys:
+          type: object
+          additionalProperties:
+            type: object
+            additionalProperties:
+              type: object
+              properties: {}
+          description: |-
+            One-time keys for the queried devices. A map from user ID, to a
+            map from devices to a map from ``<algorithm>:<key_id>`` to the key object.
+          example:
+            '@alice:example.com':
+              JLAFKJWSCS:
+                signed_curve25519:AAAAHg:
+                  key: zKbLg+NrIjpnagy+pIY6uPL4ZwEG2v+8F9lmgsnlZzs
+                  signatures:
+                    '@alice:example.com':
+                      ed25519:JLAFKJWSCS: FLWxXqGbwrb8SM3Y795eB6OA8bwBcoMZFXBqnTn58AYWZSqiD45tlBVcDa2L7RwdKXebW/VzDlnfVJ+9jok1Bw
+  
+  
     sync_rooms:
       title: Rooms
       type: object
@@ -977,6 +1122,9 @@ components:
           additionalProperties:
             type: integer
             description: 'Information on end-to-end encryption keys, as specified in |device_lists_sync|.'
+  
+  
+  
   securitySchemes:
     accessToken:
       type: apiKey
