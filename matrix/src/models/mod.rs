@@ -1,3 +1,5 @@
+mod claim_keys_request_body;
+pub use self::claim_keys_request_body::ClaimKeysRequestBody;
 mod device_keys;
 pub use self::device_keys::DeviceKeys;
 mod device_lists;
@@ -22,6 +24,10 @@ mod login_flow;
 pub use self::login_flow::LoginFlow;
 mod login_request_body;
 pub use self::login_request_body::LoginRequestBody;
+mod model_200_claim_keys;
+pub use self::model_200_claim_keys::Model200ClaimKeys;
+mod model_200_get_keys_changes;
+pub use self::model_200_get_keys_changes::Model200GetKeysChanges;
 mod model_200_keys_upload;
 pub use self::model_200_keys_upload::Model200KeysUpload;
 mod model_200_login_get;

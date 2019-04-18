@@ -24,6 +24,8 @@ All URIs are relative to *https://matrix.org/_matrix/client/r0*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
+*EndToEndEncryptionApi* | [**claim_keys**](docs/EndToEndEncryptionApi.md#claim_keys) | **post** /keys/claim | Claim one-time encryption keys.
+*EndToEndEncryptionApi* | [**get_keys_changes**](docs/EndToEndEncryptionApi.md#get_keys_changes) | **get** /keys/changes | Query users with recent device key updates.
 *EndToEndEncryptionApi* | [**query_keys**](docs/EndToEndEncryptionApi.md#query_keys) | **post** /keys/query | Download device identity keys.
 *EndToEndEncryptionApi* | [**upload_keys**](docs/EndToEndEncryptionApi.md#upload_keys) | **post** /keys/upload | Upload end-to-end encryption keys.
 *RoomParticipationApi* | [**send_event_txnid**](docs/RoomParticipationApi.md#send_event_txnid) | **put** /rooms/{roomId}/send/{eventType}/{txnId} | Send a message event to the given room.
@@ -35,6 +37,7 @@ Class | Method | HTTP request | Description
 
 ## Documentation For Models
 
+ - [ClaimKeysRequestBody](docs/ClaimKeysRequestBody.md)
  - [DeviceKeys](docs/DeviceKeys.md)
  - [DeviceLists](docs/DeviceLists.md)
  - [Error](docs/Error.md)
@@ -47,6 +50,8 @@ Class | Method | HTTP request | Description
  - [ListOfEvent](docs/ListOfEvent.md)
  - [LoginFlow](docs/LoginFlow.md)
  - [LoginRequestBody](docs/LoginRequestBody.md)
+ - [Model200ClaimKeys](docs/Model200ClaimKeys.md)
+ - [Model200GetKeysChanges](docs/Model200GetKeysChanges.md)
  - [Model200KeysUpload](docs/Model200KeysUpload.md)
  - [Model200LoginGet](docs/Model200LoginGet.md)
  - [Model200LoginPut](docs/Model200LoginPut.md)

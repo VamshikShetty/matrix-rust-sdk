@@ -29,11 +29,72 @@ impl EndToEndEncryptionApiClient {
 }
 
 pub trait EndToEndEncryptionApi {
+    fn claim_keys(&self, claim_keys_request_body: ::models::ClaimKeysRequestBody) -> Result<::models::Model200ClaimKeys, Error>;
+    fn get_keys_changes(&self, from: &str, to: &str) -> Result<::models::Model200GetKeysChanges, Error>;
     fn query_keys(&self, query_keys: ::models::QueryKeys) -> Result<::models::Model200QueryKeys, Error>;
     fn upload_keys(&self, keys_upload: ::models::KeysUpload) -> Result<::models::Model200KeysUpload, Error>;
 }
 
 impl EndToEndEncryptionApi for EndToEndEncryptionApiClient {
+    fn claim_keys(&self, claim_keys_request_body: ::models::ClaimKeysRequestBody) -> Result<::models::Model200ClaimKeys, Error> {
+        let configuration: &configuration::Configuration = self.configuration.borrow();
+        let client = &configuration.client;
+
+        let uri_str = format!("{}/keys/claim", configuration.base_path);
+        let mut req_builder = client.post(uri_str.as_str());
+
+        if let Some(ref apikey) = configuration.api_key {
+            let key = apikey.key.clone();
+            let val = match apikey.prefix {
+                Some(ref prefix) => format!("{} {}", prefix, key),
+                None => key,
+            };
+            req_builder = req_builder.query(&[("access_token", val)]);
+        }
+        if let Some(ref user_agent) = configuration.user_agent {
+            req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());
+        }
+        req_builder = req_builder.json(&claim_keys_request_body);
+
+        // send request
+        let req = req_builder.build()?;
+
+        Ok(client.execute(req)?.error_for_status()?.json()?)
+    }
+
+    fn get_keys_changes(&self, from: &str, to: &str) -> Result<::models::Model200GetKeysChanges, Error> {
+        let configuration: &configuration::Configuration = self.configuration.borrow();
+        let client = &configuration.client;
+
+        let uri_str = format!("{}/keys/changes", configuration.base_path);
+        let mut req_builder = client.get(uri_str.as_str());
+
+        let query_from = &from.to_string();
+        if ! query_from.is_empty() {
+            req_builder = req_builder.query(&[("from", query_from)]);
+        }
+        let query_to = &to.to_string();
+        if ! query_to.is_empty() {
+            req_builder = req_builder.query(&[("to", query_to)]);
+        }
+        if let Some(ref apikey) = configuration.api_key {
+            let key = apikey.key.clone();
+            let val = match apikey.prefix {
+                Some(ref prefix) => format!("{} {}", prefix, key),
+                None => key,
+            };
+            req_builder = req_builder.query(&[("access_token", val)]);
+        }
+        if let Some(ref user_agent) = configuration.user_agent {
+            req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());
+        }
+
+        // send request
+        let req = req_builder.build()?;
+
+        Ok(client.execute(req)?.error_for_status()?.json()?)
+    }
+
     fn query_keys(&self, query_keys: ::models::QueryKeys) -> Result<::models::Model200QueryKeys, Error> {
         let configuration: &configuration::Configuration = self.configuration.borrow();
         let client = &configuration.client;
