@@ -3,11 +3,11 @@ info:
   title: Matrix Client-Server Registration and Login API
   version: 1.0.0
 servers:
-  - url: 'https://matrix.org/_matrix/client/r0'
+  - url: 'https://matrix.org/_matrix'
 paths:
 
   # Session management
-  /login:
+  /client/r0/login:
     get:
       tags:
         - Session management
@@ -77,7 +77,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/rate_limited'
  
-  /logout:
+  /client/r0/logout:
     post:
       tags:
         - Session management
@@ -91,7 +91,7 @@ paths:
       security:
         - accessToken: []
 
-  /logout/all: 
+  /client/r0/logout/all: 
     post:
       tags:
         - Session management
@@ -104,9 +104,8 @@ paths:
         - accessToken: []
 
 
-
   # End-to-end encryption APIs
-  /keys/upload:
+  /client/r0/keys/upload:
     post:
       tags:
         - End-to-end encryption
@@ -130,7 +129,7 @@ paths:
       security:
         - accessToken: []
 
-  /keys/query:
+  /client/r0/keys/query:
     post:
       tags:
         - End-to-end encryption
@@ -154,7 +153,7 @@ paths:
       security:
         - accessToken: []
         
-  /keys/changes:
+  /client/r0/keys/changes:
     get:
       tags: 
         - End-to-end encryption
@@ -184,7 +183,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/200_getKeysChanges'
 
-  /keys/claim:
+  /client/r0/keys/claim:
     post:
       tags:
       - End-to-end encryption
@@ -208,9 +207,8 @@ paths:
       - accessToken: []
 
 
-
-
-  /sendToDevice/{eventType}/{txnId}:
+  # Send-to-Device
+  /client/r0/sendToDevice/{eventType}/{txnId}:
     put:
       tags:
         - Send-to-Device messaging
@@ -256,8 +254,8 @@ paths:
       security:
         - accessToken: []
         
-    
-  /rooms/{roomId}/send/{eventType}/{txnId}:
+  # ROOMS
+  /client/r0/rooms/{roomId}/send/{eventType}/{txnId}:
     put:
       tags:
         - Room participation
@@ -310,9 +308,8 @@ paths:
       security:
         - accessToken: []
   
-  
-        
-  /sync:
+  # Syncing
+  /client/r0/sync:
     get:
       tags:
         - Room participation
@@ -474,6 +471,94 @@ paths:
                             content:
                               membership: invite
                   leave: {}
+
+  # Device Management
+  /client/r0/delete_devices:
+    post:
+      tags:
+      - Device management
+      summary: Bulk deletion of devices
+      description: |-
+        This API endpoint uses the `User-Interactive Authentication API`_.
+        Deletes the given devices, and invalidates any access token associated with them.
+      operationId: deleteDevices
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/delete_devices_request_body"
+
+      responses:
+        200:
+          description: The devices were successfully removed, or had been removed previously.
+          content:
+            application/json:
+              schema:
+                type: object
+              example: {}
+        401:
+          description: The homeserver requires additional authentication information.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/401_delete_devices"
+                
+      security:
+      - accessToken: []
+
+  # Media
+  /media/r0/upload:
+    post:
+      tags:
+      - Media
+      summary: Upload some content to the content repository.
+      operationId: uploadContent
+      parameters:
+      - name: Content-Type
+        in: header
+        description: The content type of the file being uploaded
+        schema:
+          type: string
+        example: 'Content-Type: audio/mpeg'
+      - name: filename
+        in: query
+        description: The name of the file being uploaded
+        schema:
+          type: string
+        example: War and Peace.pdf
+      requestBody:
+        description: The content to be uploaded.
+        content:
+          application/json:
+            schema:
+              type: string
+              format: byte
+              example: <bytes>
+        required: true
+      responses:
+        200:
+          description: The MXC URI for the uploaded content.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content_uri:
+                    type: string
+                    description: The MXC URI to the uploaded content.
+                required:
+                - content_uri
+              example:
+                content_uri: mxc://example.com/AQwafuaFswefuhsfAFAgsw
+        429:
+          description: This request was rate-limited.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/rate_limited"
+      security:
+      - accessToken: []
+
 
 components:
   schemas:
@@ -1153,6 +1238,76 @@ components:
             type: integer
             description: 'Information on end-to-end encryption keys, as specified in |device_lists_sync|.'
   
+
+    delete_devices_request_body:
+      type: object
+      properties:
+        auth:
+          title: Authentication Data
+          type: object
+          description: |-
+            Additional authentication information for the
+            user-interactive authentication API.
+          additionalProperties:
+            description: Keys dependent on the login type
+            type: object
+            properties: {}
+          example:
+            example_credential: verypoorsharedsecret
+            session: xxxxx
+            type: example.type.foo
+        devices:
+          type: array
+          description: The list of device IDs to delete.
+          items:
+            type: string
+            description: A list of device IDs.
+          example:
+          - QBUAZIFURK
+          - AUIECTSRND
+      required:
+      - devices
+    
+    401_delete_devices:
+      title: Authentication response
+      description: Used by servers to indicate that additional authentication information is required.
+      type: object
+      properties:
+        flows:
+          type: array
+          description: A list of the login flows supported by the server for this API.
+          items:
+            type: object
+            properties:
+              stages:
+                type: array
+                description: The login type of each of the stages required to complete this authentication flow
+                items:
+                  type: string
+                  example: example.type.foo
+            required:
+            - stages
+        session:
+          type: string
+          description: This is a session identifier that the client must pass back to the home server, if one is provide, in subsequent attempts to authenticate in the same API call.
+          example: xxxxxxyz
+        completed:
+          type: array
+          description: A list of the stages the client has completed successfully
+          items:
+            type: string
+            example: example.type.foo
+        params:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+          description: Contains any information that the client will need to know in order to use a given type of authentication. For each login type presented, that type may be present as a key in this dictionary. For example, the public part of an OAuth client ID could be given here.
+          example:
+            example.type.baz:
+              example_key: foobar
+      required:
+      - flows
   
   
   securitySchemes:
