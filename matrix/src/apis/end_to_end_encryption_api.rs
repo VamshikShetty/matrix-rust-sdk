@@ -40,7 +40,7 @@ impl EndToEndEncryptionApi for EndToEndEncryptionApiClient {
         let configuration: &configuration::Configuration = self.configuration.borrow();
         let client = &configuration.client;
 
-        let uri_str = format!("{}/keys/claim", configuration.base_path);
+        let uri_str = format!("{}/client/r0/keys/claim", configuration.base_path);
         let mut req_builder = client.post(uri_str.as_str());
 
         if let Some(ref apikey) = configuration.api_key {
@@ -66,7 +66,7 @@ impl EndToEndEncryptionApi for EndToEndEncryptionApiClient {
         let configuration: &configuration::Configuration = self.configuration.borrow();
         let client = &configuration.client;
 
-        let uri_str = format!("{}/keys/changes", configuration.base_path);
+        let uri_str = format!("{}/client/r0/keys/changes", configuration.base_path);
         let mut req_builder = client.get(uri_str.as_str());
 
         let query_from = &from.to_string();
@@ -99,7 +99,7 @@ impl EndToEndEncryptionApi for EndToEndEncryptionApiClient {
         let configuration: &configuration::Configuration = self.configuration.borrow();
         let client = &configuration.client;
 
-        let uri_str = format!("{}/keys/query", configuration.base_path);
+        let uri_str = format!("{}/client/r0/keys/query", configuration.base_path);
         let mut req_builder = client.post(uri_str.as_str());
 
         if let Some(ref apikey) = configuration.api_key {
@@ -125,7 +125,7 @@ impl EndToEndEncryptionApi for EndToEndEncryptionApiClient {
         let configuration: &configuration::Configuration = self.configuration.borrow();
         let client = &configuration.client;
 
-        let uri_str = format!("{}/keys/upload", configuration.base_path);
+        let uri_str = format!("{}/client/r0/keys/upload", configuration.base_path);
         let mut req_builder = client.post(uri_str.as_str());
 
         if let Some(ref apikey) = configuration.api_key {

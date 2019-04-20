@@ -16,29 +16,29 @@ use serde_json::Value;
 
 use super::{Error, configuration, urlencode};
 
-pub struct SendToDeviceMessagingApiClient {
+pub struct DeviceManagementApiClient {
     configuration: Rc<configuration::Configuration>,
 }
 
-impl SendToDeviceMessagingApiClient {
-    pub fn new(configuration: Rc<configuration::Configuration>) -> SendToDeviceMessagingApiClient {
-        SendToDeviceMessagingApiClient {
+impl DeviceManagementApiClient {
+    pub fn new(configuration: Rc<configuration::Configuration>) -> DeviceManagementApiClient {
+        DeviceManagementApiClient {
             configuration: configuration,
         }
     }
 }
 
-pub trait SendToDeviceMessagingApi {
-    fn send_to_device(&self, event_type: &str, txn_id: &str, request_body: ::std::collections::HashMap<String, ::std::collections::HashMap<String, ::models::EventContent>>) -> Result<Value, Error>;
+pub trait DeviceManagementApi {
+    fn delete_devices(&self, delete_devices_request_body: ::models::DeleteDevicesRequestBody) -> Result<Value, Error>;
 }
 
-impl SendToDeviceMessagingApi for SendToDeviceMessagingApiClient {
-    fn send_to_device(&self, event_type: &str, txn_id: &str, request_body: ::std::collections::HashMap<String, ::std::collections::HashMap<String, ::models::EventContent>>) -> Result<Value, Error> {
+impl DeviceManagementApi for DeviceManagementApiClient {
+    fn delete_devices(&self, delete_devices_request_body: ::models::DeleteDevicesRequestBody) -> Result<Value, Error> {
         let configuration: &configuration::Configuration = self.configuration.borrow();
         let client = &configuration.client;
 
-        let uri_str = format!("{}/client/r0/sendToDevice/{eventType}/{txnId}", configuration.base_path, eventType=urlencode(event_type), txnId=urlencode(txn_id));
-        let mut req_builder = client.put(uri_str.as_str());
+        let uri_str = format!("{}/client/r0/delete_devices", configuration.base_path);
+        let mut req_builder = client.post(uri_str.as_str());
 
         if let Some(ref apikey) = configuration.api_key {
             let key = apikey.key.clone();
@@ -51,7 +51,7 @@ impl SendToDeviceMessagingApi for SendToDeviceMessagingApiClient {
         if let Some(ref user_agent) = configuration.user_agent {
             req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());
         }
-        req_builder = req_builder.json(&request_body);
+        req_builder = req_builder.json(&delete_devices_request_body);
 
         // send request
         let req = req_builder.build()?;

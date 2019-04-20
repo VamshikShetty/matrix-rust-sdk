@@ -32,14 +32,20 @@ pub fn urlencode<T: AsRef<str>>(s: T) -> String {
 
 use super::models::*;
 
+mod device_management_api;
+pub use self::device_management_api::{ DeviceManagementApi, DeviceManagementApiClient };
 mod end_to_end_encryption_api;
 pub use self::end_to_end_encryption_api::{ EndToEndEncryptionApi, EndToEndEncryptionApiClient };
+mod media_api;
+pub use self::media_api::{ MediaApi, MediaApiClient };
 mod room_participation_api;
 pub use self::room_participation_api::{ RoomParticipationApi, RoomParticipationApiClient };
 mod send_to_device_messaging_api;
 pub use self::send_to_device_messaging_api::{ SendToDeviceMessagingApi, SendToDeviceMessagingApiClient };
 mod session_management_api;
 pub use self::session_management_api::{ SessionManagementApi, SessionManagementApiClient };
+mod user_data_api;
+pub use self::user_data_api::{ UserDataApi, UserDataApiClient };
 
 pub mod configuration;
 pub mod client;

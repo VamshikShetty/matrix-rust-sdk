@@ -1,11 +1,11 @@
 # \RoomParticipationApi
 
-All URIs are relative to *https://matrix.org/_matrix/client/r0*
+All URIs are relative to *https://matrix.org/_matrix*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**send_event_txnid**](RoomParticipationApi.md#send_event_txnid) | **put** /rooms/{roomId}/send/{eventType}/{txnId} | Send a message event to the given room.
-[**sync**](RoomParticipationApi.md#sync) | **get** /sync | Synchronise the client's state and receive new messages.
+[**send_event_txnid**](RoomParticipationApi.md#send_event_txnid) | **put** /client/r0/rooms/{roomId}/send/{eventType}/{txnId} | Send a message event to the given room.
+[**sync**](RoomParticipationApi.md#sync) | **get** /client/r0/sync | Synchronise the client's state and receive new messages.
 
 
 

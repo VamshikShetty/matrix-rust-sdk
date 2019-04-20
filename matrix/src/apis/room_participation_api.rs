@@ -38,7 +38,7 @@ impl RoomParticipationApi for RoomParticipationApiClient {
         let configuration: &configuration::Configuration = self.configuration.borrow();
         let client = &configuration.client;
 
-        let uri_str = format!("{}/rooms/{roomId}/send/{eventType}/{txnId}", configuration.base_path, roomId=urlencode(room_id), eventType=urlencode(event_type), txnId=urlencode(txn_id));
+        let uri_str = format!("{}/client/r0/rooms/{roomId}/send/{eventType}/{txnId}", configuration.base_path, roomId=urlencode(room_id), eventType=urlencode(event_type), txnId=urlencode(txn_id));
         let mut req_builder = client.put(uri_str.as_str());
 
         if let Some(ref apikey) = configuration.api_key {
@@ -64,7 +64,7 @@ impl RoomParticipationApi for RoomParticipationApiClient {
         let configuration: &configuration::Configuration = self.configuration.borrow();
         let client = &configuration.client;
 
-        let uri_str = format!("{}/sync", configuration.base_path);
+        let uri_str = format!("{}/client/r0/sync", configuration.base_path);
         let mut req_builder = client.get(uri_str.as_str());
 
         let query_filter = &filter.to_string();

@@ -40,7 +40,7 @@ impl SessionManagementApi for SessionManagementApiClient {
         let configuration: &configuration::Configuration = self.configuration.borrow();
         let client = &configuration.client;
 
-        let uri_str = format!("{}/login", configuration.base_path);
+        let uri_str = format!("{}/client/r0/login", configuration.base_path);
         let mut req_builder = client.get(uri_str.as_str());
 
         if let Some(ref user_agent) = configuration.user_agent {
@@ -57,7 +57,7 @@ impl SessionManagementApi for SessionManagementApiClient {
         let configuration: &configuration::Configuration = self.configuration.borrow();
         let client = &configuration.client;
 
-        let uri_str = format!("{}/login", configuration.base_path);
+        let uri_str = format!("{}/client/r0/login", configuration.base_path);
         let mut req_builder = client.post(uri_str.as_str());
 
         if let Some(ref user_agent) = configuration.user_agent {
@@ -75,7 +75,7 @@ impl SessionManagementApi for SessionManagementApiClient {
         let configuration: &configuration::Configuration = self.configuration.borrow();
         let client = &configuration.client;
 
-        let uri_str = format!("{}/logout", configuration.base_path);
+        let uri_str = format!("{}/client/r0/logout", configuration.base_path);
         let mut req_builder = client.post(uri_str.as_str());
 
         if let Some(ref apikey) = configuration.api_key {
@@ -101,7 +101,7 @@ impl SessionManagementApi for SessionManagementApiClient {
         let configuration: &configuration::Configuration = self.configuration.borrow();
         let client = &configuration.client;
 
-        let uri_str = format!("{}/logout/all", configuration.base_path);
+        let uri_str = format!("{}/client/r0/logout/all", configuration.base_path);
         let mut req_builder = client.post(uri_str.as_str());
 
         if let Some(ref apikey) = configuration.api_key {

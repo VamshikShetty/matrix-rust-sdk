@@ -20,26 +20,31 @@ Put the package under your project folder and add the following in import:
 
 ## Documentation for API Endpoints
 
-All URIs are relative to *https://matrix.org/_matrix/client/r0*
+All URIs are relative to *https://matrix.org/_matrix*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
-*EndToEndEncryptionApi* | [**claim_keys**](docs/EndToEndEncryptionApi.md#claim_keys) | **post** /keys/claim | Claim one-time encryption keys.
-*EndToEndEncryptionApi* | [**get_keys_changes**](docs/EndToEndEncryptionApi.md#get_keys_changes) | **get** /keys/changes | Query users with recent device key updates.
-*EndToEndEncryptionApi* | [**query_keys**](docs/EndToEndEncryptionApi.md#query_keys) | **post** /keys/query | Download device identity keys.
-*EndToEndEncryptionApi* | [**upload_keys**](docs/EndToEndEncryptionApi.md#upload_keys) | **post** /keys/upload | Upload end-to-end encryption keys.
-*RoomParticipationApi* | [**send_event_txnid**](docs/RoomParticipationApi.md#send_event_txnid) | **put** /rooms/{roomId}/send/{eventType}/{txnId} | Send a message event to the given room.
-*RoomParticipationApi* | [**sync**](docs/RoomParticipationApi.md#sync) | **get** /sync | Synchronise the client's state and receive new messages.
-*SendToDeviceMessagingApi* | [**send_to_device**](docs/SendToDeviceMessagingApi.md#send_to_device) | **put** /sendToDevice/{eventType}/{txnId} | Send an event to a given set of devices.
-*SessionManagementApi* | [**get_login_flows**](docs/SessionManagementApi.md#get_login_flows) | **get** /login | Get the supported login types to authenticate users
-*SessionManagementApi* | [**login**](docs/SessionManagementApi.md#login) | **post** /login | Authenticates the user.
-*SessionManagementApi* | [**logout**](docs/SessionManagementApi.md#logout) | **post** /logout | Invalidates a user access token
-*SessionManagementApi* | [**logout_all**](docs/SessionManagementApi.md#logout_all) | **post** /logout/all | 
+*DeviceManagementApi* | [**delete_devices**](docs/DeviceManagementApi.md#delete_devices) | **post** /client/r0/delete_devices | Bulk deletion of devices
+*EndToEndEncryptionApi* | [**claim_keys**](docs/EndToEndEncryptionApi.md#claim_keys) | **post** /client/r0/keys/claim | Claim one-time encryption keys.
+*EndToEndEncryptionApi* | [**get_keys_changes**](docs/EndToEndEncryptionApi.md#get_keys_changes) | **get** /client/r0/keys/changes | Query users with recent device key updates.
+*EndToEndEncryptionApi* | [**query_keys**](docs/EndToEndEncryptionApi.md#query_keys) | **post** /client/r0/keys/query | Download device identity keys.
+*EndToEndEncryptionApi* | [**upload_keys**](docs/EndToEndEncryptionApi.md#upload_keys) | **post** /client/r0/keys/upload | Upload end-to-end encryption keys.
+*MediaApi* | [**upload_content**](docs/MediaApi.md#upload_content) | **post** /media/r0/upload | Upload some content to the content repository.
+*RoomParticipationApi* | [**send_event_txnid**](docs/RoomParticipationApi.md#send_event_txnid) | **put** /client/r0/rooms/{roomId}/send/{eventType}/{txnId} | Send a message event to the given room.
+*RoomParticipationApi* | [**sync**](docs/RoomParticipationApi.md#sync) | **get** /client/r0/sync | Synchronise the client's state and receive new messages.
+*SendToDeviceMessagingApi* | [**send_to_device**](docs/SendToDeviceMessagingApi.md#send_to_device) | **put** /client/r0/sendToDevice/{eventType}/{txnId} | Send an event to a given set of devices.
+*SessionManagementApi* | [**get_login_flows**](docs/SessionManagementApi.md#get_login_flows) | **get** /client/r0/login | Get the supported login types to authenticate users
+*SessionManagementApi* | [**login**](docs/SessionManagementApi.md#login) | **post** /client/r0/login | Authenticates the user.
+*SessionManagementApi* | [**logout**](docs/SessionManagementApi.md#logout) | **post** /client/r0/logout | Invalidates a user access token
+*SessionManagementApi* | [**logout_all**](docs/SessionManagementApi.md#logout_all) | **post** /client/r0/logout/all | 
+*UserDataApi* | [**get_token_owner**](docs/UserDataApi.md#get_token_owner) | **get** /client/r0/account/whoami | Gets information about the owner of an access token.
+*UserDataApi* | [**register**](docs/UserDataApi.md#register) | **post** /client/r0/register | Register for an account on this homeserver.
 
 
 ## Documentation For Models
 
  - [ClaimKeysRequestBody](docs/ClaimKeysRequestBody.md)
+ - [DeleteDevicesRequestBody](docs/DeleteDevicesRequestBody.md)
  - [DeviceKeys](docs/DeviceKeys.md)
  - [DeviceLists](docs/DeviceLists.md)
  - [Error](docs/Error.md)
@@ -57,11 +62,17 @@ Class | Method | HTTP request | Description
  - [Model200KeysUpload](docs/Model200KeysUpload.md)
  - [Model200LoginGet](docs/Model200LoginGet.md)
  - [Model200LoginPut](docs/Model200LoginPut.md)
+ - [Model200MediaUpload](docs/Model200MediaUpload.md)
  - [Model200QueryKeys](docs/Model200QueryKeys.md)
+ - [Model200Register](docs/Model200Register.md)
  - [Model200SendEventTxnid](docs/Model200SendEventTxnid.md)
  - [Model200Void](docs/Model200Void.md)
+ - [Model200Whoami](docs/Model200Whoami.md)
  - [QueryKeys](docs/QueryKeys.md)
  - [RateLimited](docs/RateLimited.md)
+ - [RegisterRequestBody](docs/RegisterRequestBody.md)
+ - [RequiresAdditionalAuth](docs/RequiresAdditionalAuth.md)
+ - [RequiresAdditionalAuthFlows](docs/RequiresAdditionalAuthFlows.md)
  - [Signed](docs/Signed.md)
  - [StrippedState](docs/StrippedState.md)
  - [SyncAccountData](docs/SyncAccountData.md)

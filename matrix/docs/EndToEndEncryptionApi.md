@@ -1,13 +1,13 @@
 # \EndToEndEncryptionApi
 
-All URIs are relative to *https://matrix.org/_matrix/client/r0*
+All URIs are relative to *https://matrix.org/_matrix*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**claim_keys**](EndToEndEncryptionApi.md#claim_keys) | **post** /keys/claim | Claim one-time encryption keys.
-[**get_keys_changes**](EndToEndEncryptionApi.md#get_keys_changes) | **get** /keys/changes | Query users with recent device key updates.
-[**query_keys**](EndToEndEncryptionApi.md#query_keys) | **post** /keys/query | Download device identity keys.
-[**upload_keys**](EndToEndEncryptionApi.md#upload_keys) | **post** /keys/upload | Upload end-to-end encryption keys.
+[**claim_keys**](EndToEndEncryptionApi.md#claim_keys) | **post** /client/r0/keys/claim | Claim one-time encryption keys.
+[**get_keys_changes**](EndToEndEncryptionApi.md#get_keys_changes) | **get** /client/r0/keys/changes | Query users with recent device key updates.
+[**query_keys**](EndToEndEncryptionApi.md#query_keys) | **post** /client/r0/keys/query | Download device identity keys.
+[**upload_keys**](EndToEndEncryptionApi.md#upload_keys) | **post** /client/r0/keys/upload | Upload end-to-end encryption keys.
 
 
 
