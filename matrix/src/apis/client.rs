@@ -7,6 +7,8 @@ pub struct APIClient {
     device_management_api: Box<::apis::DeviceManagementApi>,
     end_to_end_encryption_api: Box<::apis::EndToEndEncryptionApi>,
     media_api: Box<::apis::MediaApi>,
+    room_creation_api: Box<::apis::RoomCreationApi>,
+    room_directory_api: Box<::apis::RoomDirectoryApi>,
     room_participation_api: Box<::apis::RoomParticipationApi>,
     send_to_device_messaging_api: Box<::apis::SendToDeviceMessagingApi>,
     session_management_api: Box<::apis::SessionManagementApi>,
@@ -22,6 +24,8 @@ impl APIClient {
             device_management_api: Box::new(::apis::DeviceManagementApiClient::new(rc.clone())),
             end_to_end_encryption_api: Box::new(::apis::EndToEndEncryptionApiClient::new(rc.clone())),
             media_api: Box::new(::apis::MediaApiClient::new(rc.clone())),
+            room_creation_api: Box::new(::apis::RoomCreationApiClient::new(rc.clone())),
+            room_directory_api: Box::new(::apis::RoomDirectoryApiClient::new(rc.clone())),
             room_participation_api: Box::new(::apis::RoomParticipationApiClient::new(rc.clone())),
             send_to_device_messaging_api: Box::new(::apis::SendToDeviceMessagingApiClient::new(rc.clone())),
             session_management_api: Box::new(::apis::SessionManagementApiClient::new(rc.clone())),
@@ -39,6 +43,14 @@ impl APIClient {
 
     pub fn media_api(&self) -> &::apis::MediaApi{
         self.media_api.as_ref()
+    }
+
+    pub fn room_creation_api(&self) -> &::apis::RoomCreationApi{
+        self.room_creation_api.as_ref()
+    }
+
+    pub fn room_directory_api(&self) -> &::apis::RoomDirectoryApi{
+        self.room_directory_api.as_ref()
     }
 
     pub fn room_participation_api(&self) -> &::apis::RoomParticipationApi{

@@ -13,12 +13,12 @@
 use serde_json::Value;
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct Model200Void {
+pub struct Void {
 }
 
-impl Model200Void {
-    pub fn new() -> Model200Void {
-        Model200Void {
+impl Void {
+    pub fn new() -> Void {
+        Void {
         }
     }
 }

@@ -30,6 +30,10 @@ Class | Method | HTTP request | Description
 *EndToEndEncryptionApi* | [**query_keys**](docs/EndToEndEncryptionApi.md#query_keys) | **post** /client/r0/keys/query | Download device identity keys.
 *EndToEndEncryptionApi* | [**upload_keys**](docs/EndToEndEncryptionApi.md#upload_keys) | **post** /client/r0/keys/upload | Upload end-to-end encryption keys.
 *MediaApi* | [**upload_content**](docs/MediaApi.md#upload_content) | **post** /media/r0/upload | Upload some content to the content repository.
+*RoomCreationApi* | [**create_room**](docs/RoomCreationApi.md#create_room) | **post** /client/r0/createRoom | Create a new room
+*RoomDirectoryApi* | [**delete_room_alias**](docs/RoomDirectoryApi.md#delete_room_alias) | **delete** /client/r0/directory/room/{roomAlias} | Remove a mapping of room alias to room ID.
+*RoomDirectoryApi* | [**get_room_id_by_alias**](docs/RoomDirectoryApi.md#get_room_id_by_alias) | **get** /client/r0/directory/room/{roomAlias} | Get the room ID corresponding to this room alias.
+*RoomDirectoryApi* | [**set_room_alias**](docs/RoomDirectoryApi.md#set_room_alias) | **put** /client/r0/directory/room/{roomAlias} | Create a new mapping from room alias to room ID.
 *RoomParticipationApi* | [**send_event_txnid**](docs/RoomParticipationApi.md#send_event_txnid) | **put** /client/r0/rooms/{roomId}/send/{eventType}/{txnId} | Send a message event to the given room.
 *RoomParticipationApi* | [**sync**](docs/RoomParticipationApi.md#sync) | **get** /client/r0/sync | Synchronise the client's state and receive new messages.
 *SendToDeviceMessagingApi* | [**send_to_device**](docs/SendToDeviceMessagingApi.md#send_to_device) | **put** /client/r0/sendToDevice/{eventType}/{txnId} | Send an event to a given set of devices.
@@ -44,6 +48,7 @@ Class | Method | HTTP request | Description
 ## Documentation For Models
 
  - [ClaimKeysRequestBody](docs/ClaimKeysRequestBody.md)
+ - [CreateRoom](docs/CreateRoom.md)
  - [DeleteDevicesRequestBody](docs/DeleteDevicesRequestBody.md)
  - [DeviceKeys](docs/DeviceKeys.md)
  - [DeviceLists](docs/DeviceLists.md)
@@ -51,6 +56,7 @@ Class | Method | HTTP request | Description
  - [Event](docs/Event.md)
  - [EventContent](docs/EventContent.md)
  - [Invite](docs/Invite.md)
+ - [Invite3pid](docs/Invite3pid.md)
  - [InviteState](docs/InviteState.md)
  - [KeysUpload](docs/KeysUpload.md)
  - [KeysUploadDeviceKeys](docs/KeysUploadDeviceKeys.md)
@@ -66,14 +72,16 @@ Class | Method | HTTP request | Description
  - [Model200QueryKeys](docs/Model200QueryKeys.md)
  - [Model200Register](docs/Model200Register.md)
  - [Model200SendEventTxnid](docs/Model200SendEventTxnid.md)
- - [Model200Void](docs/Model200Void.md)
  - [Model200Whoami](docs/Model200Whoami.md)
  - [QueryKeys](docs/QueryKeys.md)
  - [RateLimited](docs/RateLimited.md)
  - [RegisterRequestBody](docs/RegisterRequestBody.md)
  - [RequiresAdditionalAuth](docs/RequiresAdditionalAuth.md)
  - [RequiresAdditionalAuthFlows](docs/RequiresAdditionalAuthFlows.md)
+ - [RoomDirRequestBody](docs/RoomDirRequestBody.md)
+ - [RoomId](docs/RoomId.md)
  - [Signed](docs/Signed.md)
+ - [StateEvent](docs/StateEvent.md)
  - [StrippedState](docs/StrippedState.md)
  - [SyncAccountData](docs/SyncAccountData.md)
  - [SyncPresence](docs/SyncPresence.md)
@@ -88,6 +96,7 @@ Class | Method | HTTP request | Description
  - [UnsignedData](docs/UnsignedData.md)
  - [UnsignedDeviceInfo](docs/UnsignedDeviceInfo.md)
  - [UserIdentifier](docs/UserIdentifier.md)
+ - [Void](docs/Void.md)
 
 
 ## Documentation For Authorization
