@@ -1341,6 +1341,93 @@ paths:
       security:
       - accessToken: []
 
+  /client/r0/rooms/{roomId}/invite:
+    post:
+      tags:
+      - Room membership
+      summary: Invite a user to participate in a particular room.
+      description: |-
+        .. _invite-by-user-id-endpoint:
+
+        *Note that there are two forms of this API, which are documented separately.
+        This version of the API requires that the inviter knows the Matrix
+        identifier of the invitee. The other is documented in the*
+        `third party invites section`_.
+
+        This API invites a user to participate in a particular room.
+        They do not start participating in the room until they actually join the
+        room.
+
+        Only users currently in a particular room can invite other users to
+        join that room.
+
+        If the user was invited to the room, the homeserver will append a
+        ``m.room.member`` event to the room.
+
+        .. _third party invites section: `invite-by-third-party-id-endpoint`_
+      operationId: inviteUser
+      parameters:
+      - name: roomId
+        in: path
+        description: The room identifier (not alias) to which to invite the user.
+        required: true
+        schema:
+          type: string
+        example: '!d41d8cd:matrix.org'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/user_id"
+        required: true
+      responses:
+        200:
+          description: The user has been invited to join the room.
+          content:
+            application/json:
+              schema:
+                type: object
+              example: {}
+        400:
+          description: |2-
+
+            The request is invalid. A meaningful ``errcode`` and description
+            error text will be returned. Example reasons for rejection include:
+
+            - The request body is malformed (``errcode`` set to ``M_BAD_JSON``
+              or ``M_NOT_JSON``).
+
+            - One or more users being invited to the room are residents of a
+              homeserver which does not support the requested room version. The
+              ``errcode`` will be ``M_UNSUPPORTED_ROOM_VERSION`` in these cases.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+        403:
+          description: |-
+            You do not have permission to invite the user to the room. A meaningful ``errcode`` and description error text will be returned. Example reasons for rejections are:
+
+            - The invitee has been banned from the room.
+            - The invitee is already a member of the room.
+            - The inviter is not currently in the room.
+            - The inviter's power level is insufficient to invite users to the room.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+              example:
+                errcode: M_FORBIDDEN
+                error: '@cheeky_monkey:matrix.org is banned from the room'
+        429:
+          description: This request was rate-limited.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/rate_limited"
+      security:
+      - accessToken: []
+
 
 
 components:
@@ -2485,6 +2572,17 @@ components:
           description: |-
             The token the pagination ends at. If ``dir=b`` this token should
             be used again to request even earlier events.
+
+    user_id:
+      required:
+      - user_id
+      type: object
+      properties:
+        user_id:
+          type: string
+          description: The fully qualified user ID of the invitee.
+      example:
+        user_id: '@cheeky_monkey:matrix.org'
   
 
   securitySchemes:
