@@ -22,7 +22,7 @@ pub struct Timeline {
     #[serde(rename = "prev_batch",skip_serializing_if="Option::is_none")]
     pub prev_batch: Option<String>,
     #[serde(rename = "events",skip_serializing_if="Option::is_none")]
-    pub events: Option<Vec<::models::TimelineEvents>>,
+    pub events: Option<Vec<::models::TimelineEvent>>,
 }
 
 impl Timeline {

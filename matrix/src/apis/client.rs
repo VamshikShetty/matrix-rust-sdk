@@ -9,6 +9,7 @@ pub struct APIClient {
     media_api: Box<::apis::MediaApi>,
     room_creation_api: Box<::apis::RoomCreationApi>,
     room_directory_api: Box<::apis::RoomDirectoryApi>,
+    room_membership_api: Box<::apis::RoomMembershipApi>,
     room_participation_api: Box<::apis::RoomParticipationApi>,
     send_to_device_messaging_api: Box<::apis::SendToDeviceMessagingApi>,
     session_management_api: Box<::apis::SessionManagementApi>,
@@ -26,6 +27,7 @@ impl APIClient {
             media_api: Box::new(::apis::MediaApiClient::new(rc.clone())),
             room_creation_api: Box::new(::apis::RoomCreationApiClient::new(rc.clone())),
             room_directory_api: Box::new(::apis::RoomDirectoryApiClient::new(rc.clone())),
+            room_membership_api: Box::new(::apis::RoomMembershipApiClient::new(rc.clone())),
             room_participation_api: Box::new(::apis::RoomParticipationApiClient::new(rc.clone())),
             send_to_device_messaging_api: Box::new(::apis::SendToDeviceMessagingApiClient::new(rc.clone())),
             session_management_api: Box::new(::apis::SessionManagementApiClient::new(rc.clone())),
@@ -51,6 +53,10 @@ impl APIClient {
 
     pub fn room_directory_api(&self) -> &::apis::RoomDirectoryApi{
         self.room_directory_api.as_ref()
+    }
+
+    pub fn room_membership_api(&self) -> &::apis::RoomMembershipApi{
+        self.room_membership_api.as_ref()
     }
 
     pub fn room_participation_api(&self) -> &::apis::RoomParticipationApi{

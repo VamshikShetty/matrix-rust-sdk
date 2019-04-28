@@ -19,7 +19,7 @@ pub struct CreateRoom {
     pub creation_content: Option<Value>,
     /// A list of state events to set in the new room. This allows the user to override the default state events set in the new room. The expected format of the state events are an object with type, state_key and content keys set.  Takes precedence over events set by ``preset``, but gets overriden by ``name`` and ``topic`` keys.
     #[serde(rename = "initial_state",skip_serializing_if="Option::is_none")]
-    pub initial_state: Option<Vec<::models::StateEvent>>,
+    pub initial_state: Option<Vec<::models::CreateRoomStateEvent>>,
     /// A list of user IDs to invite to the room. This will tell the server to invite everyone in the list to the newly created room.
     #[serde(rename = "invite",skip_serializing_if="Option::is_none")]
     pub invite: Option<Vec<String>>,

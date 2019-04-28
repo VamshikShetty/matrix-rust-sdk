@@ -1,4 +1,4 @@
-# TimelineEvents
+# MessagesRoomevent
 
 ## Properties
 
@@ -10,6 +10,7 @@ Name | Type | Description | Notes
 **sender** | **String** | Contains the fully-qualified ID of the user who sent this event. | [optional] 
 **origin_server_ts** | **i32** | Timestamp in milliseconds on originating homeserver when this event was sent. | [optional] 
 **unsigned** | [***::models::UnsignedData**](UnsignedData.md) |  | [optional] 
+**room_id** | **String** | Timestamp in milliseconds on originating homeserver when this event was sent. The ID of the room associated with this event. Will not be present on events that arrive through /sync, despite being required everywhere else. | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

@@ -18,7 +18,7 @@ pub struct Invite {
     #[serde(rename = "display_name",skip_serializing_if="Option::is_none")]
     pub display_name: Option<String>,
     #[serde(rename = "signed",skip_serializing_if="Option::is_none")]
-    pub signed: Option<::models::Signed>,
+    pub signed: Option<::models::InviteSigned>,
 }
 
 impl Invite {

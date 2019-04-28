@@ -13,16 +13,16 @@
 use serde_json::Value;
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct Model200SendEventTxnid {
-    /// A unique identifier for the event.
-    #[serde(rename = "event_id",skip_serializing_if="Option::is_none")]
-    pub event_id: Option<String>,
+pub struct RedactEvenIdTxnId {
+    /// The reason for the event being redacted.
+    #[serde(rename = "reason",skip_serializing_if="Option::is_none")]
+    pub reason: Option<String>,
 }
 
-impl Model200SendEventTxnid {
-    pub fn new() -> Model200SendEventTxnid {
-        Model200SendEventTxnid {
-            event_id: None,
+impl RedactEvenIdTxnId {
+    pub fn new() -> RedactEvenIdTxnId {
+        RedactEvenIdTxnId {
+            reason: None,
         }
     }
 }

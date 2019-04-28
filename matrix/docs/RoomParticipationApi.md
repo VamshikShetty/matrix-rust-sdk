@@ -4,14 +4,142 @@ All URIs are relative to *https://matrix.org/_matrix*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
+[**get_room_events**](RoomParticipationApi.md#get_room_events) | **get** /client/r0/rooms/{roomId}/messages | Get a list of events for this room
+[**get_room_state_by_type**](RoomParticipationApi.md#get_room_state_by_type) | **get** /client/r0/rooms/{roomId}/state/{eventType} | Get the state identified by the type, with the empty state key.
+[**redact_event**](RoomParticipationApi.md#redact_event) | **put** /client/r0/rooms/{roomId}/redact/{eventId}/{txnId} | Strips all non-integrity-critical information out of an event.
 [**send_event_txnid**](RoomParticipationApi.md#send_event_txnid) | **put** /client/r0/rooms/{roomId}/send/{eventType}/{txnId} | Send a message event to the given room.
+[**set_room_state**](RoomParticipationApi.md#set_room_state) | **put** /client/r0/rooms/{roomId}/state/{eventType} | Send a state event to the given room.
 [**sync**](RoomParticipationApi.md#sync) | **get** /client/r0/sync | Synchronise the client's state and receive new messages.
 
 
 
+## get_room_events
+
+> ::models::RoomidMessages get_room_events(ctx, room_id, from, dir, optional)
+Get a list of events for this room
+
+This API returns a list of message and state events for a room. It uses pagination query parameters to paginate history in the room.
+
+### Required Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context containing the authentication | nil if no authentication
+  **room_id** | **String**| The room to get events from. | 
+  **from** | **String**| The token to start returning events from. This token can be obtained from a ``prev_batch`` token returned for each room by the sync API, or from a ``start`` or ``end`` token returned by a previous request to this endpoint. | 
+  **dir** | **String**| The direction to return events from. | 
+ **optional** | **map[string]interface{}** | optional parameters | nil if no parameters
+
+### Optional Parameters
+
+Optional parameters are passed through a map[string]interface{}.
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **room_id** | **String**| The room to get events from. | 
+ **from** | **String**| The token to start returning events from. This token can be obtained from a ``prev_batch`` token returned for each room by the sync API, or from a ``start`` or ``end`` token returned by a previous request to this endpoint. | 
+ **dir** | **String**| The direction to return events from. | 
+ **to** | **String**| The token to stop returning events at. This token can be obtained from a ``prev_batch`` token returned for each room by the sync endpoint, or from a ``start`` or ``end`` token returned by a previous request to this endpoint. | 
+ **limit** | **i32**| The maximum number of events to return. Default: 10. | 
+ **filter** | **String**| A JSON RoomEventFilter to filter returned events with. | 
+
+### Return type
+
+[**::models::RoomidMessages**](roomid_messages.md)
+
+### Authorization
+
+[accessToken](../README.md#accessToken)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
+## get_room_state_by_type
+
+> Value get_room_state_by_type(ctx, room_id, event_type)
+Get the state identified by the type, with the empty state key.
+
+Looks up the contents of a state event in a room. If the user is joined to the room then the state is taken from the current state of the room. If the user has left the room then the state is taken from the state of the room when they left.  This looks up the state event with the empty state key.
+
+### Required Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context containing the authentication | nil if no authentication
+  **room_id** | **String**| The room to look up the state in. | 
+  **event_type** | **String**| The type of state to look up. | 
+
+### Return type
+
+[**Value**](Value.md)
+
+### Authorization
+
+[accessToken](../README.md#accessToken)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
+## redact_event
+
+> ::models::EventId redact_event(ctx, room_id, event_id, txn_id, optional)
+Strips all non-integrity-critical information out of an event.
+
+Strips all information out of an event which isn't critical to the integrity of the server-side representation of the room.  This cannot be undone.  Users may redact their own events, and any user with a power level greater than or equal to the `redact` power level of the room may redact events there.
+
+### Required Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context containing the authentication | nil if no authentication
+  **room_id** | **String**| The room from which to redact the event. | 
+  **event_id** | **String**| The ID of the event to redact | 
+  **txn_id** | **String**| The transaction ID for this event. Clients should generate a unique ID; it will be used by the server to ensure idempotency of requests. | 
+ **optional** | **map[string]interface{}** | optional parameters | nil if no parameters
+
+### Optional Parameters
+
+Optional parameters are passed through a map[string]interface{}.
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **room_id** | **String**| The room from which to redact the event. | 
+ **event_id** | **String**| The ID of the event to redact | 
+ **txn_id** | **String**| The transaction ID for this event. Clients should generate a unique ID; it will be used by the server to ensure idempotency of requests. | 
+ **redact_even_id_txn_id** | [**RedactEvenIdTxnId**](RedactEvenIdTxnId.md)|  | 
+
+### Return type
+
+[**::models::EventId**](event_id.md)
+
+### Authorization
+
+[accessToken](../README.md#accessToken)
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
 ## send_event_txnid
 
-> ::models::Model200SendEventTxnid send_event_txnid(ctx, room_id, event_type, txn_id, optional)
+> ::models::EventId send_event_txnid(ctx, room_id, event_type, txn_id, optional)
 Send a message event to the given room.
 
 This endpoint is used to send a message event to a room. Message events allow access to historical events and pagination, making them suited for \"once-off\" activity in a room. The body of the request should be the content object of the event; the fields in this object will vary depending on the type of event. See `Room Events`_ for the m. event specification.
@@ -40,7 +168,50 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**::models::Model200SendEventTxnid**](200_sendEventTxnid.md)
+[**::models::EventId**](event_id.md)
+
+### Authorization
+
+[accessToken](../README.md#accessToken)
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
+## set_room_state
+
+> ::models::Model200StateEventType set_room_state(ctx, room_id, event_type, optional)
+Send a state event to the given room.
+
+State events can be sent using this endpoint. This endpoint is equivalent to calling `/rooms/{roomId}/state/{eventType}/{stateKey}` with an empty `stateKey`. Previous state events with matching `<roomId>` and `<eventType>`, and empty `<stateKey>`, will be overwritten.  Requests to this endpoint **cannot use transaction IDs** like other ``PUT`` paths because they cannot be differentiated from the ``state_key``. Furthermore, ``POST`` is unsupported on state paths.  The body of the request should be the content object of the event; the fields in this object will vary depending on the type of event. See `Room Events`_ for the ``m.`` event specification. 
+
+### Required Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context containing the authentication | nil if no authentication
+  **room_id** | **String**| The room to set the state in | 
+  **event_type** | **String**| The type of event to send. | 
+ **optional** | **map[string]interface{}** | optional parameters | nil if no parameters
+
+### Optional Parameters
+
+Optional parameters are passed through a map[string]interface{}.
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **room_id** | **String**| The room to set the state in | 
+ **event_type** | **String**| The type of event to send. | 
+ **redact_even_id_txn_id** | [**RedactEvenIdTxnId**](RedactEvenIdTxnId.md)|  | 
+
+### Return type
+
+[**::models::Model200StateEventType**](200_state_eventType.md)
 
 ### Authorization
 

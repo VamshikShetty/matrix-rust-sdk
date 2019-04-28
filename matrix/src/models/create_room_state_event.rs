@@ -13,7 +13,7 @@
 use serde_json::Value;
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct StateEvent {
+pub struct CreateRoomStateEvent {
     /// The state_key of the state event. Defaults to an empty string.
     #[serde(rename = "state_key",skip_serializing_if="Option::is_none")]
     pub state_key: Option<String>,
@@ -25,9 +25,9 @@ pub struct StateEvent {
     pub content: Value,
 }
 
-impl StateEvent {
-    pub fn new(_type: String, content: Value) -> StateEvent {
-        StateEvent {
+impl CreateRoomStateEvent {
+    pub fn new(_type: String, content: Value) -> CreateRoomStateEvent {
+        CreateRoomStateEvent {
             state_key: None,
             _type: _type,
             content: content,

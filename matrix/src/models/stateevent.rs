@@ -13,7 +13,7 @@
 use serde_json::Value;
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct SyncRoomsStateEvents {
+pub struct Stateevent {
     /// Fields in this object will vary depending on the type of event. When interacting with the REST API, this is the HTTP body.
     #[serde(rename = "content",skip_serializing_if="Option::is_none")]
     pub content: Option<Value>,
@@ -39,9 +39,9 @@ pub struct SyncRoomsStateEvents {
     pub prev_content: Option<Value>,
 }
 
-impl SyncRoomsStateEvents {
-    pub fn new() -> SyncRoomsStateEvents {
-        SyncRoomsStateEvents {
+impl Stateevent {
+    pub fn new() -> Stateevent {
+        Stateevent {
             content: None,
             _type: None,
             event_id: None,

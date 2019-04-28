@@ -34,7 +34,12 @@ Class | Method | HTTP request | Description
 *RoomDirectoryApi* | [**delete_room_alias**](docs/RoomDirectoryApi.md#delete_room_alias) | **delete** /client/r0/directory/room/{roomAlias} | Remove a mapping of room alias to room ID.
 *RoomDirectoryApi* | [**get_room_id_by_alias**](docs/RoomDirectoryApi.md#get_room_id_by_alias) | **get** /client/r0/directory/room/{roomAlias} | Get the room ID corresponding to this room alias.
 *RoomDirectoryApi* | [**set_room_alias**](docs/RoomDirectoryApi.md#set_room_alias) | **put** /client/r0/directory/room/{roomAlias} | Create a new mapping from room alias to room ID.
+*RoomMembershipApi* | [**join_room**](docs/RoomMembershipApi.md#join_room) | **post** /client/r0/join/{roomIdOrAlias} | Start the requesting user participating in a particular room.
+*RoomParticipationApi* | [**get_room_events**](docs/RoomParticipationApi.md#get_room_events) | **get** /client/r0/rooms/{roomId}/messages | Get a list of events for this room
+*RoomParticipationApi* | [**get_room_state_by_type**](docs/RoomParticipationApi.md#get_room_state_by_type) | **get** /client/r0/rooms/{roomId}/state/{eventType} | Get the state identified by the type, with the empty state key.
+*RoomParticipationApi* | [**redact_event**](docs/RoomParticipationApi.md#redact_event) | **put** /client/r0/rooms/{roomId}/redact/{eventId}/{txnId} | Strips all non-integrity-critical information out of an event.
 *RoomParticipationApi* | [**send_event_txnid**](docs/RoomParticipationApi.md#send_event_txnid) | **put** /client/r0/rooms/{roomId}/send/{eventType}/{txnId} | Send a message event to the given room.
+*RoomParticipationApi* | [**set_room_state**](docs/RoomParticipationApi.md#set_room_state) | **put** /client/r0/rooms/{roomId}/state/{eventType} | Send a state event to the given room.
 *RoomParticipationApi* | [**sync**](docs/RoomParticipationApi.md#sync) | **get** /client/r0/sync | Synchronise the client's state and receive new messages.
 *SendToDeviceMessagingApi* | [**send_to_device**](docs/SendToDeviceMessagingApi.md#send_to_device) | **put** /client/r0/sendToDevice/{eventType}/{txnId} | Send an event to a given set of devices.
 *SessionManagementApi* | [**get_login_flows**](docs/SessionManagementApi.md#get_login_flows) | **get** /client/r0/login | Get the supported login types to authenticate users
@@ -49,20 +54,26 @@ Class | Method | HTTP request | Description
 
  - [ClaimKeysRequestBody](docs/ClaimKeysRequestBody.md)
  - [CreateRoom](docs/CreateRoom.md)
+ - [CreateRoomStateEvent](docs/CreateRoomStateEvent.md)
  - [DeleteDevicesRequestBody](docs/DeleteDevicesRequestBody.md)
  - [DeviceKeys](docs/DeviceKeys.md)
  - [DeviceLists](docs/DeviceLists.md)
  - [Error](docs/Error.md)
  - [Event](docs/Event.md)
  - [EventContent](docs/EventContent.md)
+ - [EventId](docs/EventId.md)
  - [Invite](docs/Invite.md)
  - [Invite3pid](docs/Invite3pid.md)
+ - [InviteSigned](docs/InviteSigned.md)
  - [InviteState](docs/InviteState.md)
+ - [JoinRoomidReq](docs/JoinRoomidReq.md)
+ - [JoinSigned](docs/JoinSigned.md)
  - [KeysUpload](docs/KeysUpload.md)
  - [KeysUploadDeviceKeys](docs/KeysUploadDeviceKeys.md)
  - [ListOfEvent](docs/ListOfEvent.md)
  - [LoginFlow](docs/LoginFlow.md)
  - [LoginRequestBody](docs/LoginRequestBody.md)
+ - [MessagesRoomevent](docs/MessagesRoomevent.md)
  - [Model200ClaimKeys](docs/Model200ClaimKeys.md)
  - [Model200GetKeysChanges](docs/Model200GetKeysChanges.md)
  - [Model200KeysUpload](docs/Model200KeysUpload.md)
@@ -71,17 +82,18 @@ Class | Method | HTTP request | Description
  - [Model200MediaUpload](docs/Model200MediaUpload.md)
  - [Model200QueryKeys](docs/Model200QueryKeys.md)
  - [Model200Register](docs/Model200Register.md)
- - [Model200SendEventTxnid](docs/Model200SendEventTxnid.md)
+ - [Model200StateEventType](docs/Model200StateEventType.md)
  - [Model200Whoami](docs/Model200Whoami.md)
  - [QueryKeys](docs/QueryKeys.md)
  - [RateLimited](docs/RateLimited.md)
+ - [RedactEvenIdTxnId](docs/RedactEvenIdTxnId.md)
  - [RegisterRequestBody](docs/RegisterRequestBody.md)
  - [RequiresAdditionalAuth](docs/RequiresAdditionalAuth.md)
  - [RequiresAdditionalAuthFlows](docs/RequiresAdditionalAuthFlows.md)
  - [RoomDirRequestBody](docs/RoomDirRequestBody.md)
  - [RoomId](docs/RoomId.md)
- - [Signed](docs/Signed.md)
- - [StateEvent](docs/StateEvent.md)
+ - [RoomidMessages](docs/RoomidMessages.md)
+ - [Stateevent](docs/Stateevent.md)
  - [StrippedState](docs/StrippedState.md)
  - [SyncAccountData](docs/SyncAccountData.md)
  - [SyncPresence](docs/SyncPresence.md)
@@ -89,9 +101,9 @@ Class | Method | HTTP request | Description
  - [SyncRooms](docs/SyncRooms.md)
  - [SyncRoomsInvite](docs/SyncRoomsInvite.md)
  - [SyncRoomsLeave](docs/SyncRoomsLeave.md)
- - [SyncRoomsStateEvents](docs/SyncRoomsStateEvents.md)
+ - [ThirdPartySigned](docs/ThirdPartySigned.md)
  - [Timeline](docs/Timeline.md)
- - [TimelineEvents](docs/TimelineEvents.md)
+ - [TimelineEvent](docs/TimelineEvent.md)
  - [UnreadNotifications](docs/UnreadNotifications.md)
  - [UnsignedData](docs/UnsignedData.md)
  - [UnsignedDeviceInfo](docs/UnsignedDeviceInfo.md)

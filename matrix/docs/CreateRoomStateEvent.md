@@ -1,11 +1,12 @@
-# Invite
+# CreateRoomStateEvent
 
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**display_name** | **String** | A name which can be displayed to represent the user instead of their third party identifier | [optional] 
-**signed** | [***::models::InviteSigned**](invite_signed.md) |  | [optional] 
+**state_key** | **String** | The state_key of the state event. Defaults to an empty string. | [optional] 
+**_type** | **String** | The type of event to send. | 
+**content** | [***Value**](.md) | The content of the event. | 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

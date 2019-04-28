@@ -42,6 +42,8 @@ mod room_creation_api;
 pub use self::room_creation_api::{ RoomCreationApi, RoomCreationApiClient };
 mod room_directory_api;
 pub use self::room_directory_api::{ RoomDirectoryApi, RoomDirectoryApiClient };
+mod room_membership_api;
+pub use self::room_membership_api::{ RoomMembershipApi, RoomMembershipApiClient };
 mod room_participation_api;
 pub use self::room_participation_api::{ RoomParticipationApi, RoomParticipationApiClient };
 mod send_to_device_messaging_api;
