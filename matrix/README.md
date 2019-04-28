@@ -34,7 +34,10 @@ Class | Method | HTTP request | Description
 *RoomDirectoryApi* | [**delete_room_alias**](docs/RoomDirectoryApi.md#delete_room_alias) | **delete** /client/r0/directory/room/{roomAlias} | Remove a mapping of room alias to room ID.
 *RoomDirectoryApi* | [**get_room_id_by_alias**](docs/RoomDirectoryApi.md#get_room_id_by_alias) | **get** /client/r0/directory/room/{roomAlias} | Get the room ID corresponding to this room alias.
 *RoomDirectoryApi* | [**set_room_alias**](docs/RoomDirectoryApi.md#set_room_alias) | **put** /client/r0/directory/room/{roomAlias} | Create a new mapping from room alias to room ID.
+*RoomMembershipApi* | [**forget_room**](docs/RoomMembershipApi.md#forget_room) | **post** /client/r0/rooms/{roomId}/forget | Stop the requesting user remembering about a particular room.
+*RoomMembershipApi* | [**invite_user**](docs/RoomMembershipApi.md#invite_user) | **post** /client/r0/rooms/{roomId}/invite | Invite a user to participate in a particular room.
 *RoomMembershipApi* | [**join_room**](docs/RoomMembershipApi.md#join_room) | **post** /client/r0/join/{roomIdOrAlias} | Start the requesting user participating in a particular room.
+*RoomMembershipApi* | [**leave_room**](docs/RoomMembershipApi.md#leave_room) | **post** /client/r0/rooms/{roomId}/leave | Stop the requesting user participating in a particular room.
 *RoomParticipationApi* | [**get_room_events**](docs/RoomParticipationApi.md#get_room_events) | **get** /client/r0/rooms/{roomId}/messages | Get a list of events for this room
 *RoomParticipationApi* | [**get_room_state_by_type**](docs/RoomParticipationApi.md#get_room_state_by_type) | **get** /client/r0/rooms/{roomId}/state/{eventType} | Get the state identified by the type, with the empty state key.
 *RoomParticipationApi* | [**redact_event**](docs/RoomParticipationApi.md#redact_event) | **put** /client/r0/rooms/{roomId}/redact/{eventId}/{txnId} | Strips all non-integrity-critical information out of an event.
@@ -107,6 +110,7 @@ Class | Method | HTTP request | Description
  - [UnreadNotifications](docs/UnreadNotifications.md)
  - [UnsignedData](docs/UnsignedData.md)
  - [UnsignedDeviceInfo](docs/UnsignedDeviceInfo.md)
+ - [UserId](docs/UserId.md)
  - [UserIdentifier](docs/UserIdentifier.md)
  - [Void](docs/Void.md)
 

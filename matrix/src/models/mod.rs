@@ -108,6 +108,8 @@ mod unsigned_data;
 pub use self::unsigned_data::UnsignedData;
 mod unsigned_device_info;
 pub use self::unsigned_device_info::UnsignedDeviceInfo;
+mod user_id;
+pub use self::user_id::UserId;
 mod user_identifier;
 pub use self::user_identifier::UserIdentifier;
 mod void;

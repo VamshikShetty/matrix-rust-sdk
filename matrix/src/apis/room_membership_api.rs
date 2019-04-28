@@ -29,10 +29,64 @@ impl RoomMembershipApiClient {
 }
 
 pub trait RoomMembershipApi {
+    fn forget_room(&self, room_id: &str) -> Result<Value, Error>;
+    fn invite_user(&self, room_id: &str, user_id: ::models::UserId) -> Result<Value, Error>;
     fn join_room(&self, room_id_or_alias: &str, server_name: Vec<String>, join_roomid_req: ::models::JoinRoomidReq) -> Result<::models::RoomId, Error>;
+    fn leave_room(&self, room_id: &str) -> Result<Value, Error>;
 }
 
 impl RoomMembershipApi for RoomMembershipApiClient {
+    fn forget_room(&self, room_id: &str) -> Result<Value, Error> {
+        let configuration: &configuration::Configuration = self.configuration.borrow();
+        let client = &configuration.client;
+
+        let uri_str = format!("{}/client/r0/rooms/{roomId}/forget", configuration.base_path, roomId=urlencode(room_id));
+        let mut req_builder = client.post(uri_str.as_str());
+
+        if let Some(ref apikey) = configuration.api_key {
+            let key = apikey.key.clone();
+            let val = match apikey.prefix {
+                Some(ref prefix) => format!("{} {}", prefix, key),
+                None => key,
+            };
+            req_builder = req_builder.query(&[("access_token", val)]);
+        }
+        if let Some(ref user_agent) = configuration.user_agent {
+            req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());
+        }
+
+        // send request
+        let req = req_builder.build()?;
+
+        Ok(client.execute(req)?.error_for_status()?.json()?)
+    }
+
+    fn invite_user(&self, room_id: &str, user_id: ::models::UserId) -> Result<Value, Error> {
+        let configuration: &configuration::Configuration = self.configuration.borrow();
+        let client = &configuration.client;
+
+        let uri_str = format!("{}/client/r0/rooms/{roomId}/invite", configuration.base_path, roomId=urlencode(room_id));
+        let mut req_builder = client.post(uri_str.as_str());
+
+        if let Some(ref apikey) = configuration.api_key {
+            let key = apikey.key.clone();
+            let val = match apikey.prefix {
+                Some(ref prefix) => format!("{} {}", prefix, key),
+                None => key,
+            };
+            req_builder = req_builder.query(&[("access_token", val)]);
+        }
+        if let Some(ref user_agent) = configuration.user_agent {
+            req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());
+        }
+        req_builder = req_builder.json(&user_id);
+
+        // send request
+        let req = req_builder.build()?;
+
+        Ok(client.execute(req)?.error_for_status()?.json()?)
+    }
+
     fn join_room(&self, room_id_or_alias: &str, server_name: Vec<String>, join_roomid_req: ::models::JoinRoomidReq) -> Result<::models::RoomId, Error> {
         let configuration: &configuration::Configuration = self.configuration.borrow();
         let client = &configuration.client;
@@ -56,6 +110,31 @@ impl RoomMembershipApi for RoomMembershipApiClient {
             req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());
         }
         req_builder = req_builder.json(&join_roomid_req);
+
+        // send request
+        let req = req_builder.build()?;
+
+        Ok(client.execute(req)?.error_for_status()?.json()?)
+    }
+
+    fn leave_room(&self, room_id: &str) -> Result<Value, Error> {
+        let configuration: &configuration::Configuration = self.configuration.borrow();
+        let client = &configuration.client;
+
+        let uri_str = format!("{}/client/r0/rooms/{roomId}/leave", configuration.base_path, roomId=urlencode(room_id));
+        let mut req_builder = client.post(uri_str.as_str());
+
+        if let Some(ref apikey) = configuration.api_key {
+            let key = apikey.key.clone();
+            let val = match apikey.prefix {
+                Some(ref prefix) => format!("{} {}", prefix, key),
+                None => key,
+            };
+            req_builder = req_builder.query(&[("access_token", val)]);
+        }
+        if let Some(ref user_agent) = configuration.user_agent {
+            req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());
+        }
 
         // send request
         let req = req_builder.build()?;
