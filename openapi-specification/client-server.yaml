@@ -302,7 +302,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/200_sendEventTxnid'
+                $ref: '#/components/schemas/event_id'
       security:
         - accessToken: []
   
@@ -889,6 +889,371 @@ paths:
               schema:
                 $ref: '#/components/schemas/rate_limited'
 
+  /client/r0/join/{roomIdOrAlias}:
+    post:
+      tags:
+      - Room membership
+      summary: Start the requesting user participating in a particular room.
+      description: |-
+        *Note that this API takes either a room ID or alias, unlike* ``/room/{roomId}/join``.
+
+        This API starts a user participating in a particular room, if that user
+        is allowed to participate in that room. After this call, the client is
+        allowed to see all current state events in the room, and all subsequent
+        events associated with the room until the user leaves the room.
+
+        After a user has joined a room, the room will appear as an entry in the
+        response of the |/initialSync|_ and |/sync|_ APIs.
+
+        If a ``third_party_signed`` was supplied, the homeserver must verify
+        that it matches a pending ``m.room.third_party_invite`` event in the
+        room, and perform key validity checking if required by the event.
+      operationId: joinRoom
+      parameters:
+      - name: roomIdOrAlias
+        in: path
+        description: The room identifier or alias to join.
+        required: true
+        schema:
+          type: string
+        example: '#monkeys:matrix.org'
+      - name: server_name
+        in: query
+        description: |-
+          The servers to attempt to join the room through. One of the servers
+          must be participating in the room.
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+        example:
+        - matrix.org
+        - elsewhere.ca
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/join_roomid_req"
+            example:
+              third_party_signed:
+                signed:
+                  mxid: '@green:eggs.ham'
+                  sender: '@cat:the.hat'
+                  signatures:
+                    horton.hears:
+                      ed25519:0: some9signature
+                  token: random8nonce
+        required: false
+      responses:
+        200:
+          description: |-
+            The room has been joined.
+
+            The joined room ID must be returned in the ``room_id`` field.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/room_id"
+        403:
+          description: |-
+            You do not have permission to join the room. A meaningful ``errcode`` and description error text will be returned. Example reasons for rejection are:
+
+            - The room is invite-only and the user was not invited.
+            - The user has been banned from the room.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+              example:
+                errcode: M_FORBIDDEN
+                error: You are not invited to this room.
+        429:
+          description: This request was rate-limited.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/rate_limited"
+      security:
+      - accessToken: []
+
+  /client/r0/rooms/{roomId}/state/{eventType}:
+    get:
+      tags:
+      - Room participation
+      summary: Get the state identified by the type, with the empty state key.
+      description: |-
+        Looks up the contents of a state event in a room. If the user is
+        joined to the room then the state is taken from the current
+        state of the room. If the user has left the room then the state is
+        taken from the state of the room when they left.
+
+        This looks up the state event with the empty state key.
+      operationId: getRoomStateByType
+      parameters:
+      - name: roomId
+        in: path
+        description: The room to look up the state in.
+        required: true
+        schema:
+          type: string
+        example: '!636q39766251:example.com'
+      - name: eventType
+        in: path
+        description: The type of state to look up.
+        required: true
+        schema:
+          type: string
+        example: m.room.name
+      responses:
+        200:
+          description: The content of the state event.
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                name: Example room name
+        403:
+          description: |
+            You aren't a member of the room and weren't previously a member of the room.
+          content: {}
+        404:
+          description: The room has no state with the given type or key.
+          content: {}
+      security:
+      - accessToken: []
+    put:
+      tags:
+      - Room participation
+      summary: Send a state event to the given room.
+      description: |
+        State events can be sent using this endpoint. This endpoint is
+        equivalent to calling `/rooms/{roomId}/state/{eventType}/{stateKey}`
+        with an empty `stateKey`. Previous state events with matching
+        `<roomId>` and `<eventType>`, and empty `<stateKey>`, will be overwritten.
+
+        Requests to this endpoint **cannot use transaction IDs**
+        like other ``PUT`` paths because they cannot be differentiated from the
+        ``state_key``. Furthermore, ``POST`` is unsupported on state paths.
+
+        The body of the request should be the content object of the event; the
+        fields in this object will vary depending on the type of event. See
+        `Room Events`_ for the ``m.`` event specification.
+      operationId: setRoomState
+      parameters:
+      - name: roomId
+        in: path
+        description: The room to set the state in
+        required: true
+        schema:
+          type: string
+        example: '!636q39766251:example.com'
+      - name: eventType
+        in: path
+        description: The type of event to send.
+        required: true
+        schema:
+          type: string
+        example: m.room.name
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "redact_evenId_txnId"
+              example:
+                name: New name for the room
+        required: false
+      responses:
+        200:
+          description: An ID for the sent event.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/200_state_eventType"
+              example:
+                event_id: $YUwRidLecu:example.com
+        403:
+          description: The sender doesn't have permission to send the event into the room.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              example:
+                errcode: M_FORBIDDEN
+                error: You do not have permission to send the event.
+      security:
+      - accessToken: []
+
+  /client/r0/rooms/{roomId}/redact/{eventId}/{txnId}:
+    put:
+      tags:
+      - Room participation
+      summary: Strips all non-integrity-critical information out of an event.
+      description: |-
+        Strips all information out of an event which isn't critical to the
+        integrity of the server-side representation of the room.
+
+        This cannot be undone.
+
+        Users may redact their own events, and any user with a power level
+        greater than or equal to the `redact` power level of the room may
+        redact events there.
+      operationId: redactEvent
+      parameters:
+      - name: roomId
+        in: path
+        description: The room from which to redact the event.
+        required: true
+        schema:
+          type: string
+        example: '!637q39766251:example.com'
+      - name: eventId
+        in: path
+        description: The ID of the event to redact
+        required: true
+        schema:
+          type: string
+        example: bai2b1i9:matrix.org
+      - name: txnId
+        in: path
+        description: |-
+          The transaction ID for this event. Clients should generate a
+          unique ID; it will be used by the server to ensure idempotency of requests.
+        required: true
+        schema:
+          type: string
+        example: "37"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/redact_evenId_txnId"
+              example:
+                reason: Indecent material
+        required: false
+      responses:
+        200:
+          description: An ID for the redaction event.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/event_id'
+              example:
+                event_id: $YUwQidLecu:example.com
+      security:
+      - accessToken: []
+
+  /client/r0/rooms/{roomId}/messages:
+    get:
+      tags:
+      - Room participation
+      summary: Get a list of events for this room
+      description: |-
+        This API returns a list of message and state events for a room. It uses
+        pagination query parameters to paginate history in the room.
+      operationId: getRoomEvents
+      parameters:
+      - name: roomId
+        in: path
+        description: The room to get events from.
+        required: true
+        schema:
+          type: string
+        example: '!636q39766251:example.com'
+      - name: from
+        in: query
+        description: |-
+          The token to start returning events from. This token can be obtained
+          from a ``prev_batch`` token returned for each room by the sync API,
+          or from a ``start`` or ``end`` token returned by a previous request
+          to this endpoint.
+        required: true
+        schema:
+          type: string
+        example: s345_678_333
+      - name: to
+        in: query
+        description: |-
+          The token to stop returning events at. This token can be obtained from
+          a ``prev_batch`` token returned for each room by the sync endpoint,
+          or from a ``start`` or ``end`` token returned by a previous request to
+          this endpoint.
+        schema:
+          type: string
+      - name: dir
+        in: query
+        description: The direction to return events from.
+        required: true
+        schema:
+          type: string
+          enum:
+          - b
+          - f
+        example: b
+      - name: limit
+        in: query
+        description: 'The maximum number of events to return. Default: 10.'
+        schema:
+          type: integer
+        example: "3"
+      - name: filter
+        in: query
+        description: A JSON RoomEventFilter to filter returned events with.
+        schema:
+          type: string
+        example: '{"contains_url":true}'
+      responses:
+        200:
+          description: A list of messages with a new token to request more.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/roomid_messages"
+                example:
+                  chunk:
+                  - age: 1042
+                    content:
+                      body: hello world
+                      msgtype: m.text
+                    event_id: $1444812213350496Caaaa:example.com
+                    origin_server_ts: 1444812213737
+                    room_id: '!Xq3620DUiqCaoxq:example.com'
+                    sender: '@alice:example.com'
+                    type: m.room.message
+                  - age: 20123
+                    content:
+                      body: the world is big
+                      msgtype: m.text
+                    event_id: $1444812213350496Cbbbb:example.com
+                    origin_server_ts: 1444812194656
+                    room_id: '!Xq3620DUiqCaoxq:example.com'
+                    sender: '@bob:example.com'
+                    type: m.room.message
+                  - age: 50789
+                    content:
+                      name: New room name
+                    event_id: $1444812213350496Ccccc:example.com
+                    origin_server_ts: 1444812163990
+                    prev_content:
+                      name: Old room name
+                    room_id: '!Xq3620DUiqCaoxq:example.com'
+                    sender: '@bob:example.com'
+                    state_key: ""
+                    type: m.room.name
+                  end: t47409-4357353_219380_26003_2265
+                  start: t47429-4392820_219380_26003_2265
+        403:
+          description: |
+            You aren't a member of the room.
+          content: {}
+      security:
+      - accessToken: []
+
+
+
+
 components:
   schemas:
     user_identifier:
@@ -946,8 +1311,6 @@ components:
           example: 10000
       required:
         - one_time_keys
-
-
 
     login_request_body:
       required:
@@ -1065,7 +1428,6 @@ components:
         device_display_name:
           type: string
           description: The display name which the user set on the device.
-
   
     keys_upload:
       type: object
@@ -1087,11 +1449,7 @@ components:
               additionalProperties:
                 type: string
             signatures:
-              type: object
-              additionalProperties:
-                type: object
-                additionalProperties:
-                  type: string
+              $ref: "#/components/schemas/signatures"
         one_time_keys:
           type: object
           properties: {}
@@ -1108,6 +1466,13 @@ components:
               signatures:
                 '@alice:example.com':
                   'ed25519:JLAFKJWSCS': IQeCEPb9HFk217cU9kw9EOiusC6kMIkoIRnbnfOh5Oc63S1ghgyjShBGpu34blQomoalCyXWyhaaT3MrLZYQAA
+    
+    signatures:
+      type: object
+      additionalProperties:
+        type: object
+        additionalProperties:
+          type: string
     query_keys:
       type: object
       properties:
@@ -1221,7 +1586,7 @@ components:
         msgtype: m.text
         body: hello
       
-    200_sendEventTxnid:
+    event_id:
       type: object
       properties:
         event_id:
@@ -1299,6 +1664,7 @@ components:
           $ref: '#/components/schemas/sync_rooms_invite'
         leave:
           $ref: '#/components/schemas/sync_rooms_leave'
+
     sync_rooms_join:
       title: Joined Rooms
       type: object
@@ -1327,7 +1693,7 @@ components:
                 description: List of events.
                 type: array
                 items:
-                  $ref: '#/components/schemas/sync_rooms_state_events'
+                  $ref: '#/components/schemas/stateevent'
           timeline:
             $ref: '#/components/schemas/timeline'
           ephemeral:
@@ -1355,6 +1721,7 @@ components:
         notification_count:
           type: integer
           description: The total number of unread notifications for this room
+
     timeline:
       type: object
       description: The timeline of messages and state changes in the room.
@@ -1368,26 +1735,54 @@ components:
         events:
           type: array
           items:
-            type: object
-            properties:
-              content:
-                type: object
-                description: 'Fields in this object will vary depending on the type of event. When interacting with the REST API, this is the HTTP body.'
-              type:
-                type: string
-                description: The type of event. This SHOULD be namespaced similar to Java package naming conventions e.g. `com.example.subdomain.event.type`
-              event_id:
-                type: string
-                description: The globally unique event identifier.
-              sender:
-                type: string
-                description: Contains the fully-qualified ID of the user who sent this event.
-              origin_server_ts:
-                type: integer
-                description: Timestamp in milliseconds on originating homeserver when this event was sent.
-              unsigned:
-                $ref: '#/components/schemas/UnsignedData'
-    sync_rooms_state_events:
+            $ref: "#/components/schemas/timeline_event"
+
+    timeline_event:
+      type: object
+      properties:
+        content:
+          type: object
+          description: 'Fields in this object will vary depending on the type of event. When interacting with the REST API, this is the HTTP body.'
+        type:
+          type: string
+          description: The type of event. This SHOULD be namespaced similar to Java package naming conventions e.g. `com.example.subdomain.event.type`
+        event_id:
+          type: string
+          description: The globally unique event identifier.
+        sender:
+          type: string
+          description: Contains the fully-qualified ID of the user who sent this event.
+        origin_server_ts:
+          type: integer
+          description: Timestamp in milliseconds on originating homeserver when this event was sent.
+        unsigned:
+          $ref: '#/components/schemas/UnsignedData'
+
+    messages_roomevent:
+      type: object
+      properties:
+        content:
+          type: object
+          description: 'Fields in this object will vary depending on the type of event. When interacting with the REST API, this is the HTTP body.'
+        type:
+          type: string
+          description: The type of event. This SHOULD be namespaced similar to Java package naming conventions e.g. `com.example.subdomain.event.type`
+        event_id:
+          type: string
+          description: The globally unique event identifier.
+        sender:
+          type: string
+          description: Contains the fully-qualified ID of the user who sent this event.
+        origin_server_ts:
+          type: integer
+          description: Timestamp in milliseconds on originating homeserver when this event was sent.
+        unsigned:
+          $ref: '#/components/schemas/UnsignedData'
+        room_id:
+          type: string
+          description: Timestamp in milliseconds on originating homeserver when this event was sent. The ID of the room associated with this event. Will not be present on events that arrive through /sync, despite being required everywhere else.
+
+    stateevent:
       type: object
       properties:
         content:
@@ -1413,6 +1808,8 @@ components:
         prev_content:
           type: object
           description: 'Optional. The previous content for this event. If there is no previous content, this key will be missing.'
+
+          
     UnsignedData:
       type: object
       description: Contains optional extra information about the event.
@@ -1502,9 +1899,9 @@ components:
           type: string
           description: A name which can be displayed to represent the user instead of their third party identifier
         signed:
-          $ref: '#/components/schemas/signed'
+          $ref: '#/components/schemas/invite_signed'
           
-    signed:
+    invite_signed:
       type: object
       description: A block of content which has been signed, which servers can use to verify the event. Clients should ignore this.
       properties:
@@ -1519,8 +1916,6 @@ components:
         token:
           type: string
           description: The token property of the containing third_party_invite object.
-    
-    
     
     sync_rooms_leave:
       type: object
@@ -1573,7 +1968,6 @@ components:
             type: integer
             description: 'Information on end-to-end encryption keys, as specified in |device_lists_sync|.'
   
-
     delete_devices_request_body:
       type: object
       properties:
@@ -1769,7 +2163,7 @@ components:
             Takes precedence over events set by ``preset``, but gets
             overriden by ``name`` and ``topic`` keys.
           items:
-            $ref: "#/components/schemas/state_event"
+            $ref: "#/components/schemas/create_room_state_event"
         invite:
           type: array
           description: |-
@@ -1885,7 +2279,7 @@ components:
         - id_server
         - medium
               
-    state_event:
+    create_room_state_event:
       type: object
       properties:
         state_key:
@@ -1928,6 +2322,81 @@ components:
             type: string
             description: A server which is aware of this room alias.
 
+    join_roomid_req:
+      type: object
+      properties:
+        third_party_signed:
+          $ref: "#/components/schemas/third_party_signed"
+
+    third_party_signed:
+      title: ThirdPartySigned
+      required:
+      - signed
+      type: object
+      properties:
+        signed:
+          $ref: "#/components/schemas/join_signed"
+      description: A signature of an ``m.third_party_invite`` token to
+        prove that this user owns a third party identity which has been
+        invited to the room.
+        
+    join_signed:
+      title: Signed
+      required:
+      - mxid
+      - sender
+      - signatures
+      - token
+      type: object
+      properties:
+        mxid:
+          type: string
+          description: The Matrix ID of the invitee.
+        sender:
+          type: string
+          description: The Matrix ID of the user who issued the invite.
+        signatures:
+          $ref: "#/components/schemas/signatures"
+          description: A signatures object containing a signature
+            of the entire signed object.
+        token:
+          type: string
+          description: The state key of the m.third_party_invite event.
+
+    200_state_eventType:
+      type: object
+      properties:
+        event_id:
+          type: string
+          description: A unique identifier for the event.
+    
+    redact_evenId_txnId:
+      type: object
+      properties:
+        reason:
+          type: string
+          description: The reason for the event being redacted.
+
+    roomid_messages:
+      description: A list of messages with a new token to request more.
+      type: object
+      properties:
+        start:
+          type: string
+          description: |-
+            The token the pagination starts from. If ``dir=b`` this will be
+            the token supplied in ``from``.
+        chunk:
+          type: array
+          description: A list of room events.
+          items:
+            $ref: "#/components/schemas/messages_roomevent"
+        end:
+          type: string
+          description: |-
+            The token the pagination ends at. If ``dir=b`` this token should
+            be used again to request even earlier events.
+  
 
   securitySchemes:
     accessToken:
