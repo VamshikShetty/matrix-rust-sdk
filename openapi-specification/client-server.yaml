@@ -1428,7 +1428,353 @@ paths:
       security:
       - accessToken: []
 
+  
+  /client/r0/rooms/{roomId}/state/{eventType}/{stateKey}:
+    get:
+      tags:
+      - Room participation
+      summary: Get the state identified by the type and key.
+      description: |-
+        Looks up the contents of a state event in a room. If the user is
+        joined to the room then the state is taken from the current
+        state of the room. If the user has left the room then the state is
+        taken from the state of the room when they left.
+      operationId: getRoomStateWithKey
+      parameters:
+      - name: roomId
+        in: path
+        description: The room to look up the state in.
+        required: true
+        schema:
+          type: string
+        example: '!636q39766251:example.com'
+      - name: eventType
+        in: path
+        description: The type of state to look up.
+        required: true
+        schema:
+          type: string
+        example: m.room.name
+      - name: stateKey
+        in: path
+        description: The key of the state to look up.
+        required: true
+        schema:
+          type: string
+        example: ""
+      responses:
+        200:
+          description: The content of the state event.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/name"
+        403:
+          description: |
+            You aren't a member of the room and weren't previously a member of the room.
+          content: {}
+        404:
+          description: The room has no state with the given type or key.
+          content: {}
+      security:
+      - accessToken: []
 
+    put:
+      tags:
+      - Room participation
+      summary: Send a state event to the given room.
+      description: |
+        State events can be sent using this endpoint.  These events will be
+        overwritten if ``<room id>``, ``<event type>`` and ``<state key>`` all
+        match.
+
+        Requests to this endpoint **cannot use transaction IDs**
+        like other ``PUT`` paths because they cannot be differentiated from the
+        ``state_key``. Furthermore, ``POST`` is unsupported on state paths.
+
+        The body of the request should be the content object of the event; the
+        fields in this object will vary depending on the type of event. See
+        `Room Events`_ for the ``m.`` event specification.
+      operationId: setRoomStateWithKey
+      parameters:
+      - name: roomId
+        in: path
+        description: The room to set the state in
+        required: true
+        schema:
+          type: string
+        example: '!636q39766251:example.com'
+      - name: eventType
+        in: path
+        description: The type of event to send.
+        required: true
+        schema:
+          type: string
+        example: m.room.member
+      - name: stateKey
+        in: path
+        description: The state_key for the state to send. Defaults to the empty string.
+        required: true
+        schema:
+          type: string
+        example: '@alice:example.com'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/setRoomStateWithKeyReq"
+        required: false
+      responses:
+        200:
+          description: An ID for the sent event.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/event_id'
+              example:
+                event_id: $YUwRidLecu:example.com
+        403:
+          description: The sender doesn't have permission to send the event into the
+            room.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+      security:
+      - accessToken: []
+
+  /client/r0/rooms/{roomId}/ban:
+    post:
+      tags:
+      - Room membership
+      summary: Ban a user in the room.
+      description: |-
+        Ban a user in the room. If the user is currently in the room, also kick them.
+
+        When a user is banned from a room, they may not join it or be invited to it until they are unbanned.
+
+        The caller must have the required power level in order to perform this operation.
+      operationId: ban
+      parameters:
+      - name: roomId
+        in: path
+        description: The room identifier (not alias) from which the user should be
+          banned.
+        required: true
+        schema:
+          type: string
+        example: '!e42d8c:matrix.org'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ban_req"
+        required: true
+      responses:
+        200:
+          description: The user has been kicked and banned from the room.
+          content:
+            application/json:
+              schema:
+                type: object
+              example: {}
+        403:
+          description: |-
+            You do not have permission to ban the user from the room. A meaningful ``errcode`` and description error text will be returned. Example reasons for rejections are:
+
+            - The banner is not currently in the room.
+            - The banner's power level is insufficient to ban users from the room.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+              example:
+                errcode: M_FORBIDDEN
+                error: You do not have a high enough power level to ban from this
+                  room.
+      security:
+      - accessToken: []
+
+  /client/r0/rooms/{roomId}/unban:
+    post:
+      tags:
+      - Room membership
+      summary: Unban a user from the room.
+      description: |-
+        Unban a user from the room. This allows them to be invited to the room,
+        and join if they would otherwise be allowed to join according to its join rules.
+
+        The caller must have the required power level in order to perform this operation.
+      operationId: unban
+      parameters:
+      - name: roomId
+        in: path
+        description: The room identifier (not alias) from which the user should be
+          unbanned.
+        required: true
+        schema:
+          type: string
+        example: '!e42d8c:matrix.org'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/user_id"
+        required: true
+      responses:
+        200:
+          description: The user has been unbanned from the room.
+          content:
+            application/json:
+              schema:
+                type: object
+              example: {}
+        403:
+          description: |-
+            You do not have permission to unban the user from the room. A meaningful ``errcode`` and description error text will be returned. Example reasons for rejections are:
+
+            - The unbanner's power level is insufficient to unban users from the room.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+              example:
+                errcode: M_FORBIDDEN
+                error: You do not have a high enough power level to unban from this
+                  room.
+      security:
+      - accessToken: []
+
+  /client/r0/devices:
+    get:
+      tags:
+      - Device management
+      summary: List registered devices for the current user
+      description: Gets information about all devices for the current user.
+      operationId: getDevices
+      responses:
+        200:
+          description: Device information
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/list_of_device"   
+              example:
+                devices:
+                - device_id: QBUAZIFURK
+                  display_name: android
+                  last_seen_ip: 1.2.3.4
+                  last_seen_ts: 1474491775024
+      security:
+      - accessToken: []
+      
+  /client/r0/devices/{deviceId}:
+    get:
+      tags:
+      - Device management
+      summary: Get a single device
+      description: Gets information on a single device, by device id.
+      operationId: getDevice
+      parameters:
+      - name: deviceId
+        in: path
+        description: The device to retrieve.
+        required: true
+        schema:
+          type: string
+        example: QBUAZIFURK
+      responses:
+        200:
+          description: Device information
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Device"
+              example:
+                device_id: QBUAZIFURK
+                display_name: android
+                last_seen_ip: 1.2.3.4
+                last_seen_ts: 1474491775024
+        404:
+          description: The current user has no device with the given ID.
+          content: {}
+      security:
+      - accessToken: []
+    put:
+      tags:
+      - Device management
+      summary: Update a device
+      description: Updates the metadata on the given device.
+      operationId: updateDevice
+      parameters:
+      - name: deviceId
+        in: path
+        description: The device to update.
+        required: true
+        schema:
+          type: string
+        example: QBUAZIFURK
+      requestBody:
+        description: New information for the device.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/display_name"
+        required: true
+      responses:
+        200:
+          description: The device was successfully updated.
+          content:
+            application/json:
+              schema:
+                type: object
+              example: {}
+        404:
+          description: The current user has no device with the given ID.
+          content: {}
+      security:
+      - accessToken: []
+    delete:
+      tags:
+      - Device management
+      summary: Delete a device
+      description: |-
+        This API endpoint uses the `User-Interactive Authentication API`_.
+
+        Deletes the given device, and invalidates any access token associated with it.
+      operationId: deleteDevice
+      parameters:
+      - name: deviceId
+        in: path
+        description: The device to delete.
+        required: true
+        schema:
+          type: string
+        example: QBUAZIFURK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/device_delete_req"
+        required: false
+      responses:
+        200:
+          description: |-
+            The device was successfully removed, or had been removed
+            previously.
+          content:
+            application/json:
+              schema:
+                type: object
+              example: {}
+        401:
+          description: The homeserver requires additional authentication information
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/requires_additional_auth"
+      security:
+      - accessToken: []
 
 components:
   schemas:
@@ -2583,8 +2929,102 @@ components:
           description: The fully qualified user ID of the invitee.
       example:
         user_id: '@cheeky_monkey:matrix.org'
-  
 
+  
+    name:
+      type: object
+      example:
+        name: Example room name
+        
+    setRoomStateWithKeyReq:
+      type: object
+      properties:
+        avatar_url:
+          type: string
+        displayname:
+          type: string
+        membership:
+          type: string
+      example:
+        avatar_url: mxc://localhost/SEsfnsuifSDFSSEF#auto
+        displayname: Alice Margatroid
+        membership: join
+        
+        
+    ban_req:
+      required:
+      - user_id
+      type: object
+      properties:
+        reason:
+          type: string
+          description: The reason the user has been banned. This will be supplied
+            as the ``reason`` on the target's updated `m.room.member`_ event.
+        user_id:
+          type: string
+          description: The fully qualified user ID of the user being banned.
+      example:
+        reason: Telling unfunny jokes
+        user_id: '@cheeky_monkey:matrix.org'
+
+    list_of_device:
+      type: object
+      properties:
+        devices:
+          type: array
+          description: A list of all registered devices for this user.
+          items:
+            $ref: "#/components/schemas/Device"
+        
+    Device:
+      title: Device
+      description: A client device
+      type: object
+      properties:
+        device_id:
+          type: string
+          description: Identifier of this device.
+          example: QBUAZIFURK
+        display_name:
+          type: string
+          description: |-
+            Display name set by the user for this device. Absent if no name has been
+            set.
+          example: android
+        last_seen_ip:
+          type: string
+          description: |-
+            The IP address where this device was last seen. (May be a few minutes out
+            of date, for efficiency reasons).
+          example: 1.2.3.4
+        last_seen_ts:
+          type: integer
+          description: |-
+            The timestamp (in milliseconds since the unix epoch) when this devices
+            was last seen. (May be a few minutes out of date, for efficiency
+            reasons).
+          format: int64
+          example: 1474491775024
+      required:
+      - device_id
+
+    display_name:
+      type: object
+      properties:
+        display_name:
+          type: string
+          description: |-
+            The new display name for this device. If not given, the
+            display name is unchanged.
+          example: My other phone
+          
+    
+    device_delete_req:
+      type: object
+      properties:
+        auth:
+          $ref: "#/components/schemas/auth"
+  
   securitySchemes:
     accessToken:
       type: apiKey
