@@ -31,9 +31,11 @@ impl RoomParticipationApiClient {
 pub trait RoomParticipationApi {
     fn get_room_events(&self, room_id: &str, from: &str, dir: &str, to: &str, limit: i32, filter: &str) -> Result<::models::RoomidMessages, Error>;
     fn get_room_state_by_type(&self, room_id: &str, event_type: &str) -> Result<Value, Error>;
+    fn get_room_state_with_key(&self, room_id: &str, event_type: &str, state_key: &str) -> Result<Value, Error>;
     fn redact_event(&self, room_id: &str, event_id: &str, txn_id: &str, redact_even_id_txn_id: ::models::RedactEvenIdTxnId) -> Result<::models::EventId, Error>;
     fn send_event_txnid(&self, room_id: &str, event_type: &str, txn_id: &str, body: Value) -> Result<::models::EventId, Error>;
     fn set_room_state(&self, room_id: &str, event_type: &str, redact_even_id_txn_id: ::models::RedactEvenIdTxnId) -> Result<::models::Model200StateEventType, Error>;
+    fn set_room_state_with_key(&self, room_id: &str, event_type: &str, state_key: &str, set_room_state_with_key_req: ::models::SetRoomStateWithKeyReq) -> Result<::models::EventId, Error>;
     fn sync(&self, filter: &str, since: &str, full_state: bool, set_presence: &str, timeout: i32) -> Result<::models::SyncResponse, Error>;
 }
 
@@ -88,6 +90,31 @@ impl RoomParticipationApi for RoomParticipationApiClient {
         let client = &configuration.client;
 
         let uri_str = format!("{}/client/r0/rooms/{roomId}/state/{eventType}", configuration.base_path, roomId=urlencode(room_id), eventType=urlencode(event_type));
+        let mut req_builder = client.get(uri_str.as_str());
+
+        if let Some(ref apikey) = configuration.api_key {
+            let key = apikey.key.clone();
+            let val = match apikey.prefix {
+                Some(ref prefix) => format!("{} {}", prefix, key),
+                None => key,
+            };
+            req_builder = req_builder.query(&[("access_token", val)]);
+        }
+        if let Some(ref user_agent) = configuration.user_agent {
+            req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());
+        }
+
+        // send request
+        let req = req_builder.build()?;
+
+        Ok(client.execute(req)?.error_for_status()?.json()?)
+    }
+
+    fn get_room_state_with_key(&self, room_id: &str, event_type: &str, state_key: &str) -> Result<Value, Error> {
+        let configuration: &configuration::Configuration = self.configuration.borrow();
+        let client = &configuration.client;
+
+        let uri_str = format!("{}/client/r0/rooms/{roomId}/state/{eventType}/{stateKey}", configuration.base_path, roomId=urlencode(room_id), eventType=urlencode(event_type), stateKey=urlencode(state_key));
         let mut req_builder = client.get(uri_str.as_str());
 
         if let Some(ref apikey) = configuration.api_key {
@@ -179,6 +206,32 @@ impl RoomParticipationApi for RoomParticipationApiClient {
             req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());
         }
         req_builder = req_builder.json(&redact_even_id_txn_id);
+
+        // send request
+        let req = req_builder.build()?;
+
+        Ok(client.execute(req)?.error_for_status()?.json()?)
+    }
+
+    fn set_room_state_with_key(&self, room_id: &str, event_type: &str, state_key: &str, set_room_state_with_key_req: ::models::SetRoomStateWithKeyReq) -> Result<::models::EventId, Error> {
+        let configuration: &configuration::Configuration = self.configuration.borrow();
+        let client = &configuration.client;
+
+        let uri_str = format!("{}/client/r0/rooms/{roomId}/state/{eventType}/{stateKey}", configuration.base_path, roomId=urlencode(room_id), eventType=urlencode(event_type), stateKey=urlencode(state_key));
+        let mut req_builder = client.put(uri_str.as_str());
+
+        if let Some(ref apikey) = configuration.api_key {
+            let key = apikey.key.clone();
+            let val = match apikey.prefix {
+                Some(ref prefix) => format!("{} {}", prefix, key),
+                None => key,
+            };
+            req_builder = req_builder.query(&[("access_token", val)]);
+        }
+        if let Some(ref user_agent) = configuration.user_agent {
+            req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());
+        }
+        req_builder = req_builder.json(&set_room_state_with_key_req);
 
         // send request
         let req = req_builder.build()?;

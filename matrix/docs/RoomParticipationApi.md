@@ -6,9 +6,11 @@ Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**get_room_events**](RoomParticipationApi.md#get_room_events) | **get** /client/r0/rooms/{roomId}/messages | Get a list of events for this room
 [**get_room_state_by_type**](RoomParticipationApi.md#get_room_state_by_type) | **get** /client/r0/rooms/{roomId}/state/{eventType} | Get the state identified by the type, with the empty state key.
+[**get_room_state_with_key**](RoomParticipationApi.md#get_room_state_with_key) | **get** /client/r0/rooms/{roomId}/state/{eventType}/{stateKey} | Get the state identified by the type and key.
 [**redact_event**](RoomParticipationApi.md#redact_event) | **put** /client/r0/rooms/{roomId}/redact/{eventId}/{txnId} | Strips all non-integrity-critical information out of an event.
 [**send_event_txnid**](RoomParticipationApi.md#send_event_txnid) | **put** /client/r0/rooms/{roomId}/send/{eventType}/{txnId} | Send a message event to the given room.
 [**set_room_state**](RoomParticipationApi.md#set_room_state) | **put** /client/r0/rooms/{roomId}/state/{eventType} | Send a state event to the given room.
+[**set_room_state_with_key**](RoomParticipationApi.md#set_room_state_with_key) | **put** /client/r0/rooms/{roomId}/state/{eventType}/{stateKey} | Send a state event to the given room.
 [**sync**](RoomParticipationApi.md#sync) | **get** /client/r0/sync | Synchronise the client's state and receive new messages.
 
 
@@ -75,6 +77,39 @@ Name | Type | Description  | Notes
  **ctx** | **context.Context** | context containing the authentication | nil if no authentication
   **room_id** | **String**| The room to look up the state in. | 
   **event_type** | **String**| The type of state to look up. | 
+
+### Return type
+
+[**Value**](Value.md)
+
+### Authorization
+
+[accessToken](../README.md#accessToken)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
+## get_room_state_with_key
+
+> Value get_room_state_with_key(ctx, room_id, event_type, state_key)
+Get the state identified by the type and key.
+
+Looks up the contents of a state event in a room. If the user is joined to the room then the state is taken from the current state of the room. If the user has left the room then the state is taken from the state of the room when they left.
+
+### Required Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context containing the authentication | nil if no authentication
+  **room_id** | **String**| The room to look up the state in. | 
+  **event_type** | **String**| The type of state to look up. | 
+  **state_key** | **String**| The key of the state to look up. | 
 
 ### Return type
 
@@ -212,6 +247,51 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**::models::Model200StateEventType**](200_state_eventType.md)
+
+### Authorization
+
+[accessToken](../README.md#accessToken)
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
+## set_room_state_with_key
+
+> ::models::EventId set_room_state_with_key(ctx, room_id, event_type, state_key, optional)
+Send a state event to the given room.
+
+State events can be sent using this endpoint.  These events will be overwritten if ``<room id>``, ``<event type>`` and ``<state key>`` all match.  Requests to this endpoint **cannot use transaction IDs** like other ``PUT`` paths because they cannot be differentiated from the ``state_key``. Furthermore, ``POST`` is unsupported on state paths.  The body of the request should be the content object of the event; the fields in this object will vary depending on the type of event. See `Room Events`_ for the ``m.`` event specification. 
+
+### Required Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context containing the authentication | nil if no authentication
+  **room_id** | **String**| The room to set the state in | 
+  **event_type** | **String**| The type of event to send. | 
+  **state_key** | **String**| The state_key for the state to send. Defaults to the empty string. | 
+ **optional** | **map[string]interface{}** | optional parameters | nil if no parameters
+
+### Optional Parameters
+
+Optional parameters are passed through a map[string]interface{}.
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **room_id** | **String**| The room to set the state in | 
+ **event_type** | **String**| The type of event to send. | 
+ **state_key** | **String**| The state_key for the state to send. Defaults to the empty string. | 
+ **set_room_state_with_key_req** | [**SetRoomStateWithKeyReq**](SetRoomStateWithKeyReq.md)|  | 
+
+### Return type
+
+[**::models::EventId**](event_id.md)
 
 ### Authorization
 

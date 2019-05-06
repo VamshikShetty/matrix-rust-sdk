@@ -4,11 +4,45 @@ All URIs are relative to *https://matrix.org/_matrix*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
+[**ban**](RoomMembershipApi.md#ban) | **post** /client/r0/rooms/{roomId}/ban | Ban a user in the room.
 [**forget_room**](RoomMembershipApi.md#forget_room) | **post** /client/r0/rooms/{roomId}/forget | Stop the requesting user remembering about a particular room.
 [**invite_user**](RoomMembershipApi.md#invite_user) | **post** /client/r0/rooms/{roomId}/invite | Invite a user to participate in a particular room.
 [**join_room**](RoomMembershipApi.md#join_room) | **post** /client/r0/join/{roomIdOrAlias} | Start the requesting user participating in a particular room.
 [**leave_room**](RoomMembershipApi.md#leave_room) | **post** /client/r0/rooms/{roomId}/leave | Stop the requesting user participating in a particular room.
+[**unban**](RoomMembershipApi.md#unban) | **post** /client/r0/rooms/{roomId}/unban | Unban a user from the room.
 
+
+
+## ban
+
+> Value ban(ctx, room_id, ban_req)
+Ban a user in the room.
+
+Ban a user in the room. If the user is currently in the room, also kick them.  When a user is banned from a room, they may not join it or be invited to it until they are unbanned.  The caller must have the required power level in order to perform this operation.
+
+### Required Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context containing the authentication | nil if no authentication
+  **room_id** | **String**| The room identifier (not alias) from which the user should be banned. | 
+  **ban_req** | [**BanReq**](BanReq.md)|  | 
+
+### Return type
+
+[**Value**](Value.md)
+
+### Authorization
+
+[accessToken](../README.md#accessToken)
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 
 ## forget_room
@@ -142,6 +176,38 @@ Name | Type | Description  | Notes
 ### HTTP request headers
 
 - **Content-Type**: Not defined
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
+## unban
+
+> Value unban(ctx, room_id, user_id)
+Unban a user from the room.
+
+Unban a user from the room. This allows them to be invited to the room, and join if they would otherwise be allowed to join according to its join rules.  The caller must have the required power level in order to perform this operation.
+
+### Required Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **ctx** | **context.Context** | context containing the authentication | nil if no authentication
+  **room_id** | **String**| The room identifier (not alias) from which the user should be unbanned. | 
+  **user_id** | [**UserId**](UserId.md)|  | 
+
+### Return type
+
+[**Value**](Value.md)
+
+### Authorization
+
+[accessToken](../README.md#accessToken)
+
+### HTTP request headers
+
+- **Content-Type**: application/json
 - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)

@@ -24,7 +24,11 @@ All URIs are relative to *https://matrix.org/_matrix*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
+*DeviceManagementApi* | [**delete_device**](docs/DeviceManagementApi.md#delete_device) | **delete** /client/r0/devices/{deviceId} | Delete a device
 *DeviceManagementApi* | [**delete_devices**](docs/DeviceManagementApi.md#delete_devices) | **post** /client/r0/delete_devices | Bulk deletion of devices
+*DeviceManagementApi* | [**get_device**](docs/DeviceManagementApi.md#get_device) | **get** /client/r0/devices/{deviceId} | Get a single device
+*DeviceManagementApi* | [**get_devices**](docs/DeviceManagementApi.md#get_devices) | **get** /client/r0/devices | List registered devices for the current user
+*DeviceManagementApi* | [**update_device**](docs/DeviceManagementApi.md#update_device) | **put** /client/r0/devices/{deviceId} | Update a device
 *EndToEndEncryptionApi* | [**claim_keys**](docs/EndToEndEncryptionApi.md#claim_keys) | **post** /client/r0/keys/claim | Claim one-time encryption keys.
 *EndToEndEncryptionApi* | [**get_keys_changes**](docs/EndToEndEncryptionApi.md#get_keys_changes) | **get** /client/r0/keys/changes | Query users with recent device key updates.
 *EndToEndEncryptionApi* | [**query_keys**](docs/EndToEndEncryptionApi.md#query_keys) | **post** /client/r0/keys/query | Download device identity keys.
@@ -34,15 +38,19 @@ Class | Method | HTTP request | Description
 *RoomDirectoryApi* | [**delete_room_alias**](docs/RoomDirectoryApi.md#delete_room_alias) | **delete** /client/r0/directory/room/{roomAlias} | Remove a mapping of room alias to room ID.
 *RoomDirectoryApi* | [**get_room_id_by_alias**](docs/RoomDirectoryApi.md#get_room_id_by_alias) | **get** /client/r0/directory/room/{roomAlias} | Get the room ID corresponding to this room alias.
 *RoomDirectoryApi* | [**set_room_alias**](docs/RoomDirectoryApi.md#set_room_alias) | **put** /client/r0/directory/room/{roomAlias} | Create a new mapping from room alias to room ID.
+*RoomMembershipApi* | [**ban**](docs/RoomMembershipApi.md#ban) | **post** /client/r0/rooms/{roomId}/ban | Ban a user in the room.
 *RoomMembershipApi* | [**forget_room**](docs/RoomMembershipApi.md#forget_room) | **post** /client/r0/rooms/{roomId}/forget | Stop the requesting user remembering about a particular room.
 *RoomMembershipApi* | [**invite_user**](docs/RoomMembershipApi.md#invite_user) | **post** /client/r0/rooms/{roomId}/invite | Invite a user to participate in a particular room.
 *RoomMembershipApi* | [**join_room**](docs/RoomMembershipApi.md#join_room) | **post** /client/r0/join/{roomIdOrAlias} | Start the requesting user participating in a particular room.
 *RoomMembershipApi* | [**leave_room**](docs/RoomMembershipApi.md#leave_room) | **post** /client/r0/rooms/{roomId}/leave | Stop the requesting user participating in a particular room.
+*RoomMembershipApi* | [**unban**](docs/RoomMembershipApi.md#unban) | **post** /client/r0/rooms/{roomId}/unban | Unban a user from the room.
 *RoomParticipationApi* | [**get_room_events**](docs/RoomParticipationApi.md#get_room_events) | **get** /client/r0/rooms/{roomId}/messages | Get a list of events for this room
 *RoomParticipationApi* | [**get_room_state_by_type**](docs/RoomParticipationApi.md#get_room_state_by_type) | **get** /client/r0/rooms/{roomId}/state/{eventType} | Get the state identified by the type, with the empty state key.
+*RoomParticipationApi* | [**get_room_state_with_key**](docs/RoomParticipationApi.md#get_room_state_with_key) | **get** /client/r0/rooms/{roomId}/state/{eventType}/{stateKey} | Get the state identified by the type and key.
 *RoomParticipationApi* | [**redact_event**](docs/RoomParticipationApi.md#redact_event) | **put** /client/r0/rooms/{roomId}/redact/{eventId}/{txnId} | Strips all non-integrity-critical information out of an event.
 *RoomParticipationApi* | [**send_event_txnid**](docs/RoomParticipationApi.md#send_event_txnid) | **put** /client/r0/rooms/{roomId}/send/{eventType}/{txnId} | Send a message event to the given room.
 *RoomParticipationApi* | [**set_room_state**](docs/RoomParticipationApi.md#set_room_state) | **put** /client/r0/rooms/{roomId}/state/{eventType} | Send a state event to the given room.
+*RoomParticipationApi* | [**set_room_state_with_key**](docs/RoomParticipationApi.md#set_room_state_with_key) | **put** /client/r0/rooms/{roomId}/state/{eventType}/{stateKey} | Send a state event to the given room.
 *RoomParticipationApi* | [**sync**](docs/RoomParticipationApi.md#sync) | **get** /client/r0/sync | Synchronise the client's state and receive new messages.
 *SendToDeviceMessagingApi* | [**send_to_device**](docs/SendToDeviceMessagingApi.md#send_to_device) | **put** /client/r0/sendToDevice/{eventType}/{txnId} | Send an event to a given set of devices.
 *SessionManagementApi* | [**get_login_flows**](docs/SessionManagementApi.md#get_login_flows) | **get** /client/r0/login | Get the supported login types to authenticate users
@@ -55,12 +63,16 @@ Class | Method | HTTP request | Description
 
 ## Documentation For Models
 
+ - [BanReq](docs/BanReq.md)
  - [ClaimKeysRequestBody](docs/ClaimKeysRequestBody.md)
  - [CreateRoom](docs/CreateRoom.md)
  - [CreateRoomStateEvent](docs/CreateRoomStateEvent.md)
  - [DeleteDevicesRequestBody](docs/DeleteDevicesRequestBody.md)
+ - [Device](docs/Device.md)
+ - [DeviceDeleteReq](docs/DeviceDeleteReq.md)
  - [DeviceKeys](docs/DeviceKeys.md)
  - [DeviceLists](docs/DeviceLists.md)
+ - [DisplayName](docs/DisplayName.md)
  - [Error](docs/Error.md)
  - [Event](docs/Event.md)
  - [EventContent](docs/EventContent.md)
@@ -73,6 +85,7 @@ Class | Method | HTTP request | Description
  - [JoinSigned](docs/JoinSigned.md)
  - [KeysUpload](docs/KeysUpload.md)
  - [KeysUploadDeviceKeys](docs/KeysUploadDeviceKeys.md)
+ - [ListOfDevice](docs/ListOfDevice.md)
  - [ListOfEvent](docs/ListOfEvent.md)
  - [LoginFlow](docs/LoginFlow.md)
  - [LoginRequestBody](docs/LoginRequestBody.md)
@@ -96,6 +109,7 @@ Class | Method | HTTP request | Description
  - [RoomDirRequestBody](docs/RoomDirRequestBody.md)
  - [RoomId](docs/RoomId.md)
  - [RoomidMessages](docs/RoomidMessages.md)
+ - [SetRoomStateWithKeyReq](docs/SetRoomStateWithKeyReq.md)
  - [Stateevent](docs/Stateevent.md)
  - [StrippedState](docs/StrippedState.md)
  - [SyncAccountData](docs/SyncAccountData.md)
